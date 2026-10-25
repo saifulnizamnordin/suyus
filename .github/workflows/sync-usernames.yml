@@ -42,7 +42,9 @@ jobs:
         with:
           branch: bot/sync-usernames
           delete-branch: true
-          add-paths: src/content/portfolios/**
+          add-paths: |
+            src/content/portfolios/**
+            src/showcases/**
           commit-message: Sync portfolio usernames with GitHub accounts
           title: Sync portfolio usernames with GitHub accounts
           body-path: sync-report.md

@@ -7,8 +7,8 @@ import Redirect from "@/components/Redirect.astro"
 import Experience from "@/components/Experience"
 import { ContactLinks, Education, Hero, Projects, SectionHeading, Skills } from "@/components/Sections"
 import { Separator } from "@/components/ui/separator"
-import DevOpsShowcase from "@/showcases/fpga-cicd/DevOpsShowcase"
-import { showcaseOwners } from "@/showcases/keys"
+import Showcase from "@/components/Showcase"
+import { getShowcase, showcasePath } from "@/showcases/registry"
 import { getPortfolios, type Portfolio } from "@/lib/portfolios"
 import { portfolioPath, site } from "@/site"
 
@@ -36,7 +36,12 @@ const { portfolio, redirectTo } = Astro.props as { portfolio: Portfolio; redirec
 const { data } = portfolio
 const { Content } = await render(portfolio)
 
-const hasShowcase = data.showcase === "fpga-cicd" && showcaseOwners[data.showcase] === data.github
+for (const name of data.showcases) {
+  if (!getShowcase(data.github, name)) {
+    throw new Error(`${data.github}.md lists showcase "${name}", but ${showcasePath(data.github, name)} does not exist or has no default export.`)
+  }
+}
+const hasShowcase = data.showcases.length > 0
 const sections = [
   { id: "about", label: "About", show: Boolean(portfolio.body?.trim()) },
   { id: "portfolio", label: "Portfolio", show: hasShowcase || data.projects.length > 0 },
@@ -78,10 +83,13 @@ const section = Object.fromEntries(sections.map((s) => [s.id, s]))
       {section.portfolio && (
         <>
           <Separator className="my-12" />
-          <section class="space-y-6">
+          <section>
             <SectionHeading id="portfolio" eyebrow={section.portfolio.eyebrow} title="Portfolio" />
-            {hasShowcase && <DevOpsShowcase client:visible />}
-            {data.projects.length > 0 && <Projects data={data} />}
+            {/* grid gap, not space-y: Astro's island wrapper is display: contents, so margins don't apply to it */}
+            <div class="grid gap-6">
+              {data.showcases.map((name) => <Showcase client:visible username={data.github} name={name} />)}
+              {data.projects.length > 0 && <Projects data={data} />}
+            </div>
           </section>
         </>
       )}

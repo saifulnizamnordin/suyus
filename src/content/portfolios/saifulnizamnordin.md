@@ -7,7 +7,7 @@ role: Senior Design Engineer at Silicon X Sdn Bhd
 location: Malaysia
 email: saifulnizamnordin@llyf.in
 linkedin: https://www.linkedin.com/in/saifulnizamnordin
-showcase: fpga-cicd
+showcases: [fpga-cicd]
 experience:
   - company: Silicon X Sdn Bhd
     type: Full-time

@@ -23,6 +23,10 @@ linkedin: https://www.linkedin.com/in/your-profile
 website: https://example.com
 # githubId: 1234567              # optional — filled in automatically after your PR is merged
 
+# Showcases — optional interactive React sections, shown at the top of "Portfolio".
+# Each name is a folder in src/showcases/your-username/<name>/ (start from templates/showcase/).
+# showcases: [pipeline-speedup]
+
 # Projects — shown as cards in the "Portfolio" section.
 projects:
   - title: Self-hosted CI runners

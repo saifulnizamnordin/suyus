@@ -1,4 +1,4 @@
-// Data for the FPGA CI/CD interactive showcase on /p/saifulnizamnordin.
+// Data for the "fpga-cicd" showcase on /p/saifulnizamnordin.
 // Image names, layers and job types are illustrative.
 export const fpgaPlatform = {
   "title": "FPGA CI/CD Platform",

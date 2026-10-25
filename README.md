@@ -17,7 +17,9 @@ Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/
 | [`src/content.config.ts`](src/content.config.ts) | Schema every portfolio is validated against at build time |
 | [`src/pages/index.astro`](src/pages/index.astro) | Landing page and portfolio directory (`/`) |
 | [`src/pages/p/[username].astro`](src/pages/p/[username].astro) | Portfolio page (`/p/<username>/`), plus redirects from previous usernames |
-| [`src/showcases/`](src/showcases/) | Custom interactive sections, each tied to one portfolio via `showcase:` |
+| [`src/showcases/registry.ts`](src/showcases/registry.ts) | Finds showcases by folder; [`Showcase.tsx`](src/components/Showcase.tsx) is the single island that renders them |
+| [`src/showcases/<username>/<name>/`](src/showcases/) | Interactive React sections owned by one user, enabled with `showcases:` |
+| [`templates/showcase/`](templates/showcase/) | Starter showcase for contributors |
 | [`src/site.ts`](src/site.ts) | Site name, repo URL and submission links |
 | [`scripts/`](scripts/) | Submission check and username sync |
 
@@ -75,11 +77,16 @@ Then **Settings → Pages → Custom domain**: enter `suy.us`, save, wait for th
 
 After renaming the repository on GitHub, update `repo` in [`src/site.ts`](src/site.ts) so the Submit buttons point at the new name. (GitHub redirects the old URL, but it's better not to rely on it.)
 
-## Adding a showcase
+## Showcases
 
-A showcase is a custom React section for one person's portfolio, for things Markdown can't express (like the interactive CI/CD simulation on `/p/saifulnizamnordin`).
+Showcases are per-user React components at `src/showcases/<username>/<name>/index.tsx` (default export), turned on with `showcases: [<name>]` in that user's portfolio file. They are discovered automatically — no registration step. The username folder is the ownership boundary:
 
-1. Add the component under `src/showcases/<key>/`.
-2. Register `<key>` and its owner's username in [`src/showcases/keys.ts`](src/showcases/keys.ts).
-3. Render it in [`src/pages/p/[username].astro`](src/pages/p/[username].astro).
-4. Set `showcase: <key>` in the owner's portfolio file.
+- a portfolio can only render showcases from its own folder
+- the PR check only lets a contributor touch their own folder, and statically blocks network calls, raw HTML, `eval` and imports outside `react`, `lucide-react`, `@/components/ui/*`, `@/lib/utils` and the showcase's own files
+- the username sync renames the folder together with the portfolio file
+
+The static checks are a first pass, not a sandbox: **read every showcase before merging**, since it runs on the suy.us origin.
+
+All showcases are bundled into one client chunk today. If there get to be many, switch [`src/showcases/registry.ts`](src/showcases/registry.ts) to lazy loading.
+
+Contributor docs: [SUBMISSION.md → Showcases](SUBMISSION.md#showcases).

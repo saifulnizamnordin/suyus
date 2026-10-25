@@ -1,7 +1,6 @@
 import { defineCollection } from "astro:content"
 import { glob } from "astro/loaders"
 import { z } from "astro/zod"
-import { showcaseKeys } from "./showcases/keys"
 
 // One Markdown file per person: src/content/portfolios/<github-username>.md
 // The frontmatter holds structured data; the Markdown body is the "About" section.
@@ -33,8 +32,8 @@ const portfolios = defineCollection({
     // Managed by the username sync job.
     status: z.enum(["active", "inactive"]).default("active"),
     previousUsernames: z.array(z.string()).default([]),
-    // Custom interactive sections are added by maintainers (see src/showcases).
-    showcase: z.enum(showcaseKeys).optional(),
+    // Interactive React sections from src/showcases/<github>/<name>/index.tsx, in display order.
+    showcases: z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Showcase names are lowercase-with-dashes")).default([]),
     projects: z
       .array(
         z.object({

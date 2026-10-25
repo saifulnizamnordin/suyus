@@ -3,7 +3,8 @@
 // Each portfolio is tracked by its numeric GitHub account ID (`githubId`), which never changes,
 // so a renamed account can be followed to its new username:
 //   - missing githubId   → looked up from the username and filled in
-//   - account renamed    → file renamed, `github` updated, old name added to `previousUsernames`
+//   - account renamed    → portfolio file and showcase folder renamed, `github` updated,
+//                          old name added to `previousUsernames`
 //   - account deleted    → `status: inactive` (hidden from the site)
 //   - account is back    → `status: active` again
 //
@@ -11,7 +12,7 @@
 // Usage: GITHUB_TOKEN=... node scripts/sync-usernames.mjs [--dry-run]
 import { existsSync, renameSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
-import { PORTFOLIO_DIR, github, listPortfolios, readPortfolio, summary, writePortfolio } from "./lib.mjs"
+import { PORTFOLIO_DIR, SHOWCASE_DIR, github, listPortfolios, readPortfolio, summary, writePortfolio } from "./lib.mjs"
 
 const dryRun = process.argv.includes("--dry-run")
 const changes = []
@@ -47,22 +48,30 @@ for (const path of listPortfolios()) {
 
   const login = account.login.toLowerCase()
   let target = path
+  const showcaseFrom = join(SHOWCASE_DIR, username)
+  const showcaseTo = join(SHOWCASE_DIR, login)
   if (login !== username) {
     target = join(PORTFOLIO_DIR, `${login}.md`)
-    if (existsSync(target)) {
-      changes.push(`- \`${username}\`: renamed to \`${login}\` on GitHub, but \`${target}\` already exists — **needs manual review**`)
+    const conflict = existsSync(target) ? target : existsSync(showcaseFrom) && existsSync(showcaseTo) ? showcaseTo : null
+    if (conflict) {
+      changes.push(`- \`${username}\`: renamed to \`${login}\` on GitHub, but \`${conflict}\` already exists — **needs manual review**`)
+      target = path
     } else {
       const previous = doc.get("previousUsernames")?.toJSON?.() ?? []
       doc.set("github", login)
       doc.set("previousUsernames", doc.createNode([...new Set([...previous, username])], { flow: true }))
-      changes.push(`- \`${username}\` → \`${login}\`: GitHub username changed — file renamed, old address will redirect`)
+      const moved = existsSync(showcaseFrom) ? "file and showcase folder renamed" : "file renamed"
+      changes.push(`- \`${username}\` → \`${login}\`: GitHub username changed — ${moved}, old address will redirect`)
       changed = true
     }
   }
 
   if (changed && !dryRun) {
     writePortfolio(path, portfolio)
-    if (target !== path && !existsSync(target)) renameSync(path, target)
+    if (target !== path) {
+      renameSync(path, target)
+      if (existsSync(showcaseFrom)) renameSync(showcaseFrom, showcaseTo)
+    }
   }
 }
 
