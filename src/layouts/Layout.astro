@@ -17,6 +17,8 @@ const canonical = new URL(Astro.url.pathname.replace(/(\/index)?\.html$/, "") ||
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#4F46E5" />
     <link rel="canonical" href={canonical} />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -24,6 +26,12 @@ const canonical = new URL(Astro.url.pathname.replace(/(\/index)?\.html$/, "") ||
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Suyus" />
+    <meta property="og:image" content={new URL("/og.png", Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Suyus — Developer portfolios, written in Markdown." />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="generator" content={Astro.generator} />
     <script is:inline>
       try {

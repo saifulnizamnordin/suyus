@@ -1,6 +1,7 @@
 ---
 import { Plus } from "lucide-react"
 import ThemeToggle from "@/components/ThemeToggle"
+import Logo from "@/components/Logo.astro"
 import { site } from "@/site"
 
 interface Props {
@@ -12,7 +13,7 @@ const { nav = [] } = Astro.props
 
 <header class="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
   <div class="mx-auto flex h-14 max-w-3xl items-center justify-between gap-2 px-4">
-    <a href="/" class="font-semibold tracking-tight">{site.name}</a>
+    <a href="/" class="shrink-0" aria-label={`${site.name} home`}><Logo class="h-7 w-auto" /></a>
     <nav class="flex items-center gap-1 text-sm">
       {nav.map((item) => (
         <a href={item.href} class="hidden rounded-md px-2.5 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground md:inline-block">

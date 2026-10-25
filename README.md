@@ -1,6 +1,15 @@
-# Suyus
+<p align="center">
+  <a href="https://suy.us">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="public/brand/suyus-logo-color-on-dark.svg">
+      <img src="public/brand/suyus-logo-color.svg" alt="Suyus" height="64">
+    </picture>
+  </a>
+</p>
 
-Suyus: developer portfolios, written in Markdown. Live at **https://suy.us**.
+<p align="center"><b>Developer portfolios, written in Markdown.</b><br><a href="https://suy.us">suy.us</a> · <a href="https://suy.us/p">Browse</a> · <a href="SUBMISSION.md">Submit yours</a> · <a href="https://suy.us/brand">Media kit</a></p>
+
+# Suyus
 
 Any GitHub user can add a portfolio by submitting one Markdown file. Each one gets a page at `https://suy.us/p/<github-username>`.
 
@@ -92,3 +101,13 @@ The static checks are a first pass, not a sandbox: **read every showcase before 
 All showcases are bundled into one client chunk today. If there get to be many, switch [`src/showcases/registry.ts`](src/showcases/registry.ts) to lazy loading.
 
 Contributor docs: [SUBMISSION.md → Showcases](SUBMISSION.md#showcases).
+
+## Brand
+
+Logos, colours, pronunciation and usage rules live on the [media kit page](https://suy.us/brand). The files are in [`public/brand/`](public/brand/):
+
+- `suyus-logo-*`: horizontal logo, in `color`, `color-on-dark`, `black` and `white`
+- `suyus-mark-*`: square mark, in `color`, `black` and `white`
+- `suyus-media-kit.zip`: everything, plus `BRAND.txt`
+
+Each logo comes as .svg and transparent .png. The site header uses [`src/components/Logo.astro`](src/components/Logo.astro), the same artwork drawn inline so the wordmark follows light and dark mode.

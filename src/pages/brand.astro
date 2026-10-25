@@ -1,0 +1,242 @@
+---
+import { Ban, Check, Download, Volume2 } from "lucide-react"
+import Layout from "@/layouts/Layout.astro"
+import SiteHeader from "@/components/SiteHeader.astro"
+import SiteFooter from "@/components/SiteFooter.astro"
+import { site } from "@/site"
+
+const B = "/brand"
+
+const horizontal = [
+  { file: "suyus-logo-color", label: "Full colour", note: "Default, on light backgrounds", bg: "light" },
+  { file: "suyus-logo-color-on-dark", label: "Full colour, dark", note: "On dark backgrounds", bg: "dark" },
+  { file: "suyus-logo-black", label: "All black", note: "One-colour print, light backgrounds", bg: "light" },
+  { file: "suyus-logo-white", label: "All white", note: "Inverse, dark or photo backgrounds", bg: "dark" },
+]
+const square = [
+  { file: "suyus-mark-color", label: "Full colour", note: "Avatars, favicons, app icons", bg: "light" },
+  { file: "suyus-mark-black", label: "All black", note: "One-colour use", bg: "light" },
+  { file: "suyus-mark-white", label: "All white", note: "Inverse, dark backgrounds", bg: "dark" },
+]
+const colors = [
+  { name: "Suyus Indigo", hex: "#4F46E5", rgb: "79 70 229", use: "Primary brand colour: the mark's tile" },
+  { name: "Ink", hex: "#0A0A0A", rgb: "10 10 10", use: "Wordmark and text on light backgrounds" },
+  { name: "Paper", hex: "#FFFFFF", rgb: "255 255 255", use: "The S, and the wordmark on dark backgrounds" },
+]
+const donts = [
+  { label: "Don't stretch or skew", style: "transform: scaleX(1.45)" },
+  { label: "Don't change the colours", style: "filter: hue-rotate(150deg) saturate(1.4)" },
+  { label: "Don't rotate", style: "transform: rotate(-14deg)" },
+  { label: "Don't add effects", style: "filter: drop-shadow(4px 6px 0 #f43f5e) drop-shadow(-2px -2px 6px #22d3ee)" },
+]
+---
+
+<Layout title={`Media kit — ${site.name}`} description="Suyus logos, colours, pronunciation and usage rules for press and partners.">
+  <SiteHeader />
+  <main class="mx-auto max-w-3xl px-4">
+    <section class="pt-12 pb-4 sm:pt-16">
+      <p class="text-xs font-medium tracking-widest text-muted-foreground uppercase">Brand</p>
+      <h1 class="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Media kit</h1>
+      <p class="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+        Logos, colours and usage rules for writing about or linking to Suyus. Use the files as they are. If you need
+        something that isn't here, <a class="underline underline-offset-4 hover:text-foreground" href={site.repo + "/issues"} target="_blank" rel="noreferrer">open an issue</a>.
+      </p>
+      <a
+        href={`${B}/suyus-media-kit.zip`}
+        download
+        class="mt-6 inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/80"
+      >
+        <Download className="size-4" /> Download everything (.zip)
+      </a>
+    </section>
+
+    <!-- Name & pronunciation -->
+    <section class="pt-14">
+      <h2 class="text-2xl font-semibold tracking-tight" id="name">Name & pronunciation</h2>
+      <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4 rounded-xl border bg-card p-6">
+        <div>
+          <p class="text-4xl font-semibold tracking-tight">Suyus</p>
+          <p class="mt-1 text-muted-foreground">
+            pronounced <span class="font-medium text-foreground">soo-yoos</span>{" "}
+            <span class="font-mono text-sm">/ˈsuː.juːs/</span>
+          </p>
+        </div>
+        <button
+          type="button"
+          data-play={`${B}/suyus-pronunciation.wav`}
+          class="inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-medium hover:bg-muted"
+          aria-label="Play pronunciation of Suyus"
+        >
+          <Volume2 className="size-4" /> Listen
+        </button>
+      </div>
+      <ul class="mt-4 space-y-1.5 text-sm text-muted-foreground">
+        <li>Write it as <span class="font-medium text-foreground">Suyus</span>: one word, capital S.</li>
+        <li>The web address is <span class="font-medium text-foreground">suy.us</span>, always lowercase. Use it for links, not as the name.</li>
+      </ul>
+    </section>
+
+    <!-- Logos -->
+    <section class="pt-14">
+      <h2 class="text-2xl font-semibold tracking-tight" id="logos">Logo</h2>
+      <p class="mt-2 text-muted-foreground">Vector (.svg) for anything that scales; transparent .png where SVG isn't supported.</p>
+
+      <h3 class="mt-8 font-medium">Horizontal <span class="font-normal text-muted-foreground">— main logo for headers, documents and slides</span></h3>
+      <div class="mt-3 grid gap-3 sm:grid-cols-2">
+        {horizontal.map((v) => (
+          <figure class="overflow-hidden rounded-xl border">
+            <div class:list={["flex h-36 items-center justify-center p-6", v.bg === "dark" ? "bg-neutral-950" : "bg-white"]}>
+              <img src={`${B}/${v.file}.svg`} alt={`Suyus logo, ${v.label}`} class="h-12 w-auto" />
+            </div>
+            <figcaption class="flex items-center justify-between gap-2 border-t bg-card px-4 py-3">
+              <div class="min-w-0">
+                <p class="text-sm font-medium">{v.label}</p>
+                <p class="truncate text-xs text-muted-foreground">{v.note}</p>
+              </div>
+              <div class="flex shrink-0 gap-1.5">
+                <a href={`${B}/${v.file}.svg`} download class="rounded-md border px-2 py-1 text-xs font-medium hover:bg-muted">SVG</a>
+                <a href={`${B}/${v.file}.png`} download class="rounded-md border px-2 py-1 text-xs font-medium hover:bg-muted">PNG</a>
+              </div>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <h3 class="mt-8 font-medium">Square <span class="font-normal text-muted-foreground">— profile pictures, favicons and app icons</span></h3>
+      <div class="mt-3 grid gap-3 sm:grid-cols-3">
+        {square.map((v) => (
+          <figure class="overflow-hidden rounded-xl border">
+            <div class:list={["flex h-36 items-center justify-center p-6", v.bg === "dark" ? "bg-neutral-950" : "bg-white"]}>
+              <img src={`${B}/${v.file}.svg`} alt={`Suyus mark, ${v.label}`} class="size-20" />
+            </div>
+            <figcaption class="flex items-center justify-between gap-2 border-t bg-card px-4 py-3">
+              <div class="min-w-0">
+                <p class="text-sm font-medium">{v.label}</p>
+                <p class="truncate text-xs text-muted-foreground">{v.note}</p>
+              </div>
+              <div class="flex shrink-0 gap-1.5">
+                <a href={`${B}/${v.file}.svg`} download class="rounded-md border px-2 py-1 text-xs font-medium hover:bg-muted">SVG</a>
+                <a href={`${B}/${v.file}.png`} download class="rounded-md border px-2 py-1 text-xs font-medium hover:bg-muted">PNG</a>
+              </div>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <!-- Colours -->
+    <section class="pt-14">
+      <h2 class="text-2xl font-semibold tracking-tight" id="colours">Colours</h2>
+      <div class="mt-6 grid gap-3 sm:grid-cols-3">
+        {colors.map((c) => (
+          <button
+            type="button"
+            data-copy={c.hex}
+            class="group overflow-hidden rounded-xl border text-left transition-shadow hover:shadow-md"
+            aria-label={`Copy ${c.name} ${c.hex}`}
+          >
+            <div class="h-24 border-b" style={`background:${c.hex}`}></div>
+            <div class="space-y-0.5 bg-card px-4 py-3">
+              <p class="flex items-center justify-between text-sm font-medium">
+                {c.name}
+                <span class="font-mono text-xs text-muted-foreground group-hover:text-foreground" data-copy-label>{c.hex}</span>
+              </p>
+              <p class="font-mono text-xs text-muted-foreground">RGB {c.rgb}</p>
+              <p class="pt-1 text-xs text-muted-foreground">{c.use}</p>
+            </div>
+          </button>
+        ))}
+      </div>
+      <p class="mt-3 text-xs text-muted-foreground">Click a colour to copy its hex code. Typeface: <a class="underline underline-offset-4 hover:text-foreground" href="https://vercel.com/font" target="_blank" rel="noreferrer">Geist</a> (SemiBold for the wordmark).</p>
+    </section>
+
+    <!-- Clear space -->
+    <section class="pt-14">
+      <h2 class="text-2xl font-semibold tracking-tight" id="clear-space">Clear space & minimum size</h2>
+      <div class="mt-6 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
+        <div class="flex justify-center rounded-xl border bg-white p-6">
+          <!-- x = the dot's diameter; keep 2x of empty space on every side -->
+          <div class="relative" style="padding: 1.5rem;">
+            <div class="absolute inset-0 rounded-md border border-dashed border-[#4F46E5]/60 bg-[#4F46E5]/5"></div>
+            <img src={`${B}/suyus-logo-color.svg`} alt="Suyus logo with clear space" class="relative h-12 w-auto" />
+            <span class="absolute top-1/2 left-0 -translate-y-1/2 px-1 font-mono text-[10px] text-[#4F46E5]">2x</span>
+            <span class="absolute top-0 left-1/2 -translate-x-1/2 font-mono text-[10px] text-[#4F46E5]">2x</span>
+          </div>
+        </div>
+        <ul class="space-y-3 text-sm sm:w-64">
+          <li><span class="font-medium">Clear space:</span> <span class="text-muted-foreground">keep at least <b class="text-foreground">2x</b> empty on every side, where <b class="text-foreground">x</b> is the diameter of the dot in the mark.</span></li>
+          <li><span class="font-medium">Horizontal logo:</span> <span class="text-muted-foreground">at least 24 px (or 6 mm) tall.</span></li>
+          <li><span class="font-medium">Square mark:</span> <span class="text-muted-foreground">at least 16 px (or 4 mm). Below that, use the favicon as is.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Usage rules -->
+    <section class="pt-14">
+      <h2 class="text-2xl font-semibold tracking-tight" id="usage">Usage rules</h2>
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <div class="rounded-xl border bg-card p-4">
+          <p class="flex items-center gap-1.5 text-sm font-medium"><Check className="size-4 text-good" /> Do</p>
+          <ul class="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
+            <li>Use the files from this page, unchanged.</li>
+            <li>Scale proportionally: hold Shift, or set only the width or the height.</li>
+            <li>Pick the colourway with the most contrast: full colour or black on light, full colour on dark, or white on dark.</li>
+            <li>Keep the clear space around the logo.</li>
+          </ul>
+        </div>
+        <div class="rounded-xl border bg-card p-4">
+          <p class="flex items-center gap-1.5 text-sm font-medium"><Ban className="size-4 text-critical" /> Don't</p>
+          <ul class="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
+            <li>Stretch, skew, rotate or crop the logo.</li>
+            <li>Change the brand colours without permission.</li>
+            <li>Add shadows, outlines, gradients or other effects.</li>
+            <li>Rebuild the wordmark in another font, or rearrange the mark and wordmark.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {donts.map((d) => (
+          <figure class="overflow-hidden rounded-xl border">
+            <div class="relative flex h-24 items-center justify-center overflow-hidden bg-white p-4">
+              <img src={`${B}/suyus-logo-color.svg`} alt="" class="h-7 w-auto" style={d.style} />
+              <span class="absolute top-2 right-2 flex size-5 items-center justify-center rounded-full bg-critical text-white">
+                <Ban className="size-3" />
+              </span>
+            </div>
+            <figcaption class="border-t bg-card px-3 py-2 text-xs text-muted-foreground">{d.label}</figcaption>
+          </figure>
+        ))}
+      </div>
+      <p class="mt-6 text-sm text-muted-foreground">
+        The Suyus name and logo identify the project. Please don't use them in a way that suggests endorsement or partnership
+        without asking first.
+      </p>
+    </section>
+
+    <SiteFooter />
+  </main>
+</Layout>
+
+<script>
+  // Pronunciation audio and click-to-copy colour swatches (no framework needed).
+  let audio: HTMLAudioElement | undefined
+  document.querySelectorAll<HTMLButtonElement>("[data-play]").forEach((button) => {
+    button.addEventListener("click", () => {
+      audio ??= new Audio(button.dataset.play)
+      audio.currentTime = 0
+      audio.play().catch(() => {})
+    })
+  })
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const label = button.querySelector<HTMLElement>("[data-copy-label]")
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? "")
+        if (label) {
+          label.textContent = "Copied"
+          setTimeout(() => (label.textContent = button.dataset.copy ?? ""), 1200)
+        }
+      } catch {}
+    })
+  })
+</script>

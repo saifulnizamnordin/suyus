@@ -1,5 +1,6 @@
 ---
 import { ArrowUpRight } from "lucide-react"
+import Logo from "@/components/Logo.astro"
 import { site } from "@/site"
 ---
 
@@ -7,13 +8,14 @@ import { site } from "@/site"
   <slot />
   <div class="flex flex-wrap items-center justify-between gap-4">
     <p>
-      <a href="/" class="font-medium text-foreground hover:underline hover:underline-offset-4">{site.name}</a>
+      <a href="/" class="inline-block align-middle text-foreground" aria-label={`${site.name} home`}><Logo class="h-5 w-auto" /></a>
       <span> · {site.tagline}</span>
     </p>
     <div class="flex flex-wrap gap-x-4 gap-y-2">
       <a class="inline-flex items-center gap-1 hover:text-foreground" href={site.submissionUrl} target="_blank" rel="noreferrer">
         Submit your portfolio <ArrowUpRight className="size-3.5" />
       </a>
+      <a class="hover:text-foreground" href="/brand">Media kit</a>
       <a class="inline-flex items-center gap-1 hover:text-foreground" href={site.repo} target="_blank" rel="noreferrer">
         Source <ArrowUpRight className="size-3.5" />
       </a>
