@@ -1,5 +1,5 @@
 // Site-wide settings. Update `repo` here if the GitHub repository is renamed.
-const repo = "https://github.com/saifulnizamnordin/portfolio"
+const repo = "https://github.com/saifulnizamnordin/suyus"
 
 export const site = {
   name: "Suyus",
