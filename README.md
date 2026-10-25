@@ -21,7 +21,8 @@ Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/
 | [`src/showcases/<username>/<name>/`](src/showcases/) | Interactive React sections owned by one user, enabled with `showcases:` |
 | [`templates/showcase/`](templates/showcase/) | Starter showcase for contributors |
 | [`src/site.ts`](src/site.ts) | Site name, repo URL and submission links |
-| [`scripts/`](scripts/) | Submission check and username sync |
+| [`scripts/`](scripts/) | Submission check, username sync, `encrypt-email` |
+| [`workers/contact/`](workers/contact/) | Cloudflare Worker that reveals emails after a Turnstile check — [setup](workers/contact/README.md) |
 
 ## Development
 

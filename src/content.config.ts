@@ -26,7 +26,15 @@ const portfolios = defineCollection({
     headline: z.string().min(1),
     role: z.string().optional(),
     location: z.string().optional(),
-    email: z.email().optional(),
+    // A plain address would be public in this repo and in the page, so only an encrypted one is accepted.
+    email: z
+      .never({ error: "Plain `email` isn't allowed — run `npm run encrypt-email -- you@example.com` and use `emailEncrypted`" })
+      .optional(),
+    // Encrypted with src/contact/public-key.json; revealed by the contact Worker after a Turnstile check.
+    emailEncrypted: z
+      .string()
+      .regex(/^v1\.[A-Za-z0-9_-]{300,400}$/, "Use the value printed by `npm run encrypt-email`")
+      .optional(),
     linkedin: z.url().optional(),
     website: z.url().optional(),
     // Managed by the username sync job.

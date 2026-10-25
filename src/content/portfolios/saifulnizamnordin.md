@@ -5,7 +5,7 @@ githubId: 7272163
 headline: Senior Design Engineer · Cloud & DevOps
 role: Senior Design Engineer at Silicon X Sdn Bhd
 location: Malaysia
-email: saifulnizamnordin@llyf.in
+emailEncrypted: v1.mOeP5mwqvwyo14agydb8UVHwlrw5RzIILIlcH9wvZscrDsn-qtYW4QjGxeTC5Ld3iZe9KvGGvWIm5kq_Qv7E2ZyFbehRWH0vfDEHXmRen3otDyGIH_38aCWaOZdPKUg-hsvuyRrzSqaTseiS2uPK04PwumbgMAUrGGNBkMHbZQUGpThrzkMd46ijLAqCNbK5AtKh8CYYfmme1aM-S4NN-S2-FBIg76dR9zB9KtH66WWP7wOaqZUn3H8i8GoHK1cD-v9KNA-B136ZHhhVGn9qupe2-qn0KsZvgpGmMkFcXcWA1-M1k8LB1IJBpDWL0N3vd6ZR6Y3PXBCEsQwEAHoq9A
 linkedin: https://www.linkedin.com/in/saifulnizamnordin
 showcases: [fpga-cicd]
 experience:

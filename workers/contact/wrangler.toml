@@ -1,0 +1,14 @@
+name = "suyus-contact"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Served on a subdomain of the suy.us zone (the zone must be in the same Cloudflare account).
+routes = [{ pattern = "contact.suy.us", custom_domain = true }]
+
+[vars]
+ALLOWED_ORIGINS = "https://suy.us"
+ALLOWED_HOSTNAMES = "suy.us"
+
+# Secrets (set with `npx wrangler secret put <NAME>`, never committed):
+#   TURNSTILE_SECRET   — Turnstile widget secret key
+#   EMAIL_PRIVATE_KEY  — contents of .secrets/email-private-key.json

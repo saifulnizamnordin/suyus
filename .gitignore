@@ -30,3 +30,8 @@ Thumbs.db
 
 # username sync report (CI)
 sync-report.md
+
+# contact worker secrets — never commit
+workers/contact/.secrets/
+workers/contact/.dev.vars
+workers/contact/.wrangler/

@@ -8,6 +8,9 @@ import Experience from "@/components/Experience"
 import { ContactLinks, Education, Hero, Projects, SectionHeading, Skills } from "@/components/Sections"
 import { Separator } from "@/components/ui/separator"
 import Showcase from "@/components/Showcase"
+import ShareMenu from "@/components/ShareMenu"
+import EmailReveal from "@/components/EmailReveal"
+import { contact, contactEnabled } from "@/contact"
 import { getShowcase, showcasePath } from "@/showcases/registry"
 import { getPortfolios, type Portfolio } from "@/lib/portfolios"
 import { portfolioPath, site } from "@/site"
@@ -34,6 +37,9 @@ export async function getStaticPaths() {
 
 const { portfolio, redirectTo } = Astro.props as { portfolio: Portfolio; redirectTo?: string }
 const { data } = portfolio
+const pageUrl = new URL(portfolioPath(data.github), site.url).href
+const shareTitle = `${data.name} — ${data.headline}`
+const showEmail = Boolean(data.emailEncrypted && contactEnabled)
 const { Content } = await render(portfolio)
 
 for (const name of data.showcases) {
@@ -66,7 +72,19 @@ const section = Object.fromEntries(sections.map((s) => [s.id, s]))
     <SiteHeader nav={sections.map((s) => ({ href: `#${s.id}`, label: s.label }))} />
 
     <main class="mx-auto max-w-3xl px-4">
-      <Hero data={data} />
+      <Hero data={data}>
+        <ShareMenu slot="share" client:idle url={pageUrl} title={shareTitle} />
+        {showEmail && (
+          <EmailReveal
+            slot="email"
+            client:idle
+            name={data.name}
+            ciphertext={data.emailEncrypted!}
+            apiUrl={contact.apiUrl}
+            siteKey={contact.turnstileSiteKey}
+          />
+        )}
+      </Hero>
 
       {section.about && (
         <>
@@ -127,7 +145,18 @@ const section = Object.fromEntries(sections.map((s) => [s.id, s]))
       <SiteFooter>
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 border-b pb-6">
           <p>© {new Date().getFullYear()} {data.name}</p>
-          <ContactLinks data={data} />
+          <ContactLinks data={data}>
+            {showEmail && (
+              <EmailReveal
+                client:idle
+                variant="link"
+                name={data.name}
+                ciphertext={data.emailEncrypted!}
+                apiUrl={contact.apiUrl}
+                siteKey={contact.turnstileSiteKey}
+              />
+            )}
+          </ContactLinks>
         </div>
       </SiteFooter>
     </main>

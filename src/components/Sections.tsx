@@ -1,4 +1,5 @@
-import { ArrowUpRight, Award, BadgeCheck, Globe, GraduationCap, Mail, MapPin } from "lucide-react"
+import type { ReactNode } from "react"
+import { ArrowUpRight, Award, BadgeCheck, Globe, GraduationCap, MapPin } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,7 +8,8 @@ import { avatarUrl, githubUrl, type PortfolioData } from "@/lib/portfolios"
 
 type Props = { data: PortfolioData }
 
-export function Hero({ data }: Props) {
+// `share` and `email` are interactive islands passed in from Astro as named slots.
+export function Hero({ data, share, email }: Props & { share?: ReactNode; email?: ReactNode }) {
   return (
     <section className="flex flex-col gap-6 pt-12 pb-4 sm:pt-20">
       <img
@@ -33,15 +35,16 @@ export function Hero({ data }: Props) {
         )}
       </div>
       <div className="flex flex-wrap gap-2">
+        {share}
         {data.linkedin && (
-          <Button asChild size="lg">
+          <Button asChild size="lg" variant="outline">
             <a href={data.linkedin} target="_blank" rel="noreferrer">
               <LinkedinIcon className="size-4" />
               LinkedIn
             </a>
           </Button>
         )}
-        <Button asChild size="lg" variant={data.linkedin ? "outline" : "default"}>
+        <Button asChild size="lg" variant="outline">
           <a href={githubUrl(data.github)} target="_blank" rel="noreferrer">
             <GithubIcon className="size-4" />
             GitHub
@@ -55,14 +58,7 @@ export function Hero({ data }: Props) {
             </a>
           </Button>
         )}
-        {data.email && (
-          <Button asChild size="lg" variant="outline">
-            <a href={`mailto:${data.email}`} title={data.email}>
-              <Mail className="size-4" />
-              Email
-            </a>
-          </Button>
-        )}
+        {email}
       </div>
     </section>
   )
@@ -218,15 +214,11 @@ export function Education({ data }: Props) {
 }
 
 /** Contact links for a portfolio page footer. */
-export function ContactLinks({ data }: Props) {
+export function ContactLinks({ data, children }: Props & { children?: ReactNode }) {
   const link = "inline-flex items-center gap-1 hover:text-foreground"
   return (
     <div className="flex flex-wrap gap-x-4 gap-y-2">
-      {data.email && (
-        <a className={link} href={`mailto:${data.email}`}>
-          <Mail className="size-3.5" /> {data.email}
-        </a>
-      )}
+      {children}
       {data.linkedin && (
         <a className={link} href={data.linkedin} target="_blank" rel="noreferrer">
           LinkedIn <ArrowUpRight className="size-3.5" />

@@ -18,7 +18,9 @@ headline: Backend Engineer · Cloud & DevOps
 # Optional ────────────────────────────────────────────────────────────────────
 role: Senior Backend Engineer at Example Corp
 location: Kuala Lumpur, Malaysia
-email: you@example.com           # shown publicly as a mailto link — remove if you'd rather not
+# Email is never stored as plain text. Run:  npm run encrypt-email -- you@example.com
+# and paste the line it prints. Visitors see it only after passing a Cloudflare Turnstile check.
+# emailEncrypted: v1.xxxxxxxx…
 linkedin: https://www.linkedin.com/in/your-profile
 website: https://example.com
 # githubId: 1234567              # optional — filled in automatically after your PR is merged

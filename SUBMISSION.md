@@ -132,7 +132,7 @@ The PR check enforces these automatically. A maintainer still reads every showca
 - **The pull request must come from the same GitHub account** as the file name and the showcase folder. You can't submit or edit someone else's portfolio or showcases.
 - Only change your own portfolio file and your own `src/showcases/<your-username>/` folder.
 - Keep it professional. No ads, no spam, nothing you don't have the right to publish.
-- Everything you submit is public, including your email address if you add one.
+- Everything you submit is public. That's why email addresses are only accepted encrypted (see [Your email address](#your-email-address)).
 
 ## What the checks do
 
@@ -160,7 +160,7 @@ If a check fails, open the **Details** link on the check for the exact error.
 | `headline` | yes | One line under your name |
 | `role` | | Current role, e.g. "Backend Engineer at Example Corp" |
 | `location` | | |
-| `email` | | Shown publicly as a mailto link |
+| `emailEncrypted` | | Your email, encrypted — see [Your email address](#your-email-address). A plain `email` field is rejected |
 | `linkedin`, `website` | | Full URLs starting with `https://` |
 | `showcases` | | Names of your showcase folders, e.g. `[pipeline-speedup]` |
 | `projects` | | Cards with `title`, `summary`, optional `url`, `tags` and `stats` |
@@ -172,6 +172,29 @@ If a check fails, open the **Details** link on the check for the exact error.
 Your profile photo comes from your GitHub avatar, so there's nothing to upload.
 
 The schema that enforces all of this is in [`src/content.config.ts`](src/content.config.ts).
+
+## Your email address
+
+Your email is never stored or shown as plain text, so it stays out of reach of spam and phishing bots:
+
+- The repository only holds an **encrypted** copy. Bots that crawl GitHub can't read it.
+- The page has no `mailto:` link and no address to hover over or copy from the source.
+- A visitor who clicks **Email** must pass a **Cloudflare Turnstile** check. Only then does the server decrypt the address and show it, with **Copy** and **Send email** buttons.
+
+To add yours, run this in your fork:
+
+```sh
+npm install
+npm run encrypt-email -- you@example.com
+```
+
+It prints one line. Paste it into your portfolio file:
+
+```yaml
+emailEncrypted: v1.mOeP5mwqvwyo14agydb8U…
+```
+
+Encryption happens on your machine with the site's public key. Nothing is sent anywhere, and only the suy.us contact service can decrypt it.
 
 ## Changing your GitHub username
 
