@@ -1,12 +1,15 @@
 ---
-import { ArrowRight, FileText, GitPullRequest, MapPin, Plus, RefreshCw, UserCheck } from "lucide-react"
+import { ArrowRight, FileText, GitPullRequest, Plus, RefreshCw, UserCheck } from "lucide-react"
 import Layout from "@/layouts/Layout.astro"
 import SiteHeader from "@/components/SiteHeader.astro"
 import SiteFooter from "@/components/SiteFooter.astro"
-import { avatarUrl, getPortfolios } from "@/lib/portfolios"
+import PortfolioCard from "@/components/PortfolioCard"
+import { getPortfolios, toDirectoryEntry } from "@/lib/portfolios"
 import { portfolioPath, site } from "@/site"
 
 const portfolios = await getPortfolios()
+const HOME_LIMIT = 6
+const featured = portfolios.slice(0, HOME_LIMIT).map(toDirectoryEntry)
 
 const steps = [
   {
@@ -28,7 +31,7 @@ const steps = [
 ---
 
 <Layout title={`${site.name} — ${site.tagline}`} description={site.description}>
-  <SiteHeader nav={[{ href: "#portfolios", label: "Portfolios" }, { href: "#how-it-works", label: "How it works" }]} />
+  <SiteHeader nav={[{ href: "#how-it-works", label: "How it works" }]} />
 
   <main class="mx-auto max-w-3xl px-4">
     <section class="pt-14 pb-6 sm:pt-20">
@@ -64,51 +67,17 @@ const steps = [
           <p class="text-xs font-medium tracking-widest text-muted-foreground uppercase">Directory</p>
           <h2 class="mt-1 text-2xl font-semibold tracking-tight">Portfolios</h2>
         </div>
-        <p class="text-sm text-muted-foreground tabular-nums">{portfolios.length} {portfolios.length === 1 ? "person" : "people"}</p>
+        <a href="/p" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          Browse all {portfolios.length} <ArrowRight className="size-4" />
+        </a>
       </div>
 
       <ul class="grid gap-3 sm:grid-cols-2">
-        {portfolios.map(({ data }) => {
-          const topSkills = data.skills.flatMap((g) => g.items).slice(0, 4)
-          return (
-            <li>
-              <a
-                href={portfolioPath(data.github)}
-                class="group flex h-full flex-col gap-3 rounded-xl border bg-card p-4 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                <div class="flex items-center gap-3">
-                  <img
-                    src={avatarUrl(data.github, 96)}
-                    alt=""
-                    width={48}
-                    height={48}
-                    loading="lazy"
-                    class="size-12 shrink-0 rounded-full bg-muted object-cover ring-1 ring-foreground/10"
-                  />
-                  <div class="min-w-0">
-                    <p class="truncate font-medium">{data.name}</p>
-                    <p class="truncate text-xs text-muted-foreground">@{data.github}</p>
-                  </div>
-                  <ArrowRight className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-                </div>
-                <p class="text-sm leading-relaxed text-muted-foreground">{data.headline}</p>
-                {data.location && (
-                  <p class="flex items-center gap-1 text-xs text-muted-foreground">
-                    <MapPin className="size-3" />
-                    {data.location}
-                  </p>
-                )}
-                {topSkills.length > 0 && (
-                  <div class="mt-auto flex flex-wrap gap-1.5">
-                    {topSkills.map((s) => (
-                      <span class="rounded-full border px-2 py-0.5 text-xs">{s}</span>
-                    ))}
-                  </div>
-                )}
-              </a>
-            </li>
-          )
-        })}
+        {featured.map((entry) => (
+          <li>
+            <PortfolioCard entry={entry} />
+          </li>
+        ))}
         <li>
           <a
             href={site.submissionUrl}
@@ -122,6 +91,13 @@ const steps = [
           </a>
         </li>
       </ul>
+      {portfolios.length > HOME_LIMIT && (
+        <div class="mt-4 flex justify-center">
+          <a href="/p" class="inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-sm font-medium hover:bg-muted">
+            Browse and search all {portfolios.length} portfolios <ArrowRight className="size-4" />
+          </a>
+        </div>
+      )}
     </section>
 
     <section id="how-it-works" class="scroll-mt-20 pt-16">

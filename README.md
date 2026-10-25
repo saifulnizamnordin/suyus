@@ -15,7 +15,8 @@ Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/
 | [`src/content/portfolios/`](src/content/portfolios/) | One `<username>.md` per person. Frontmatter = structured data, body = About section |
 | [`templates/portfolio.md`](templates/portfolio.md) | Starting point for new submissions |
 | [`src/content.config.ts`](src/content.config.ts) | Schema every portfolio is validated against at build time |
-| [`src/pages/index.astro`](src/pages/index.astro) | Landing page and portfolio directory (`/`) |
+| [`src/pages/index.astro`](src/pages/index.astro) | Landing page with the first 6 portfolios (`/`) |
+| [`src/pages/p/index.astro`](src/pages/p/index.astro) | Browse all (`/p`): search by name, role, skill, company; filter by skill and country; filters live in the URL (`/p?q=devops&skill=Kubernetes&country=Malaysia`) |
 | [`src/pages/p/[username].astro`](src/pages/p/[username].astro) | Portfolio page (`/p/<username>`), plus redirects from previous usernames |
 | [`src/showcases/registry.ts`](src/showcases/registry.ts) | Finds showcases by folder; [`Showcase.tsx`](src/components/Showcase.tsx) is the single island that renders them |
 | [`src/showcases/<username>/<name>/`](src/showcases/) | Interactive React sections owned by one user, enabled with `showcases:` |

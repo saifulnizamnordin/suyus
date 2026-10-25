@@ -12,7 +12,7 @@ import { site } from "@/site"
     if (/^\/p\/[a-z0-9-]+\/$/i.test(location.pathname)) {
       location.replace(location.pathname.slice(0, -1) + location.search + location.hash)
     } else if (location.pathname === "/p/") {
-      location.replace("/#portfolios")
+      location.replace("/p")
     }
   </script>
   <SiteHeader />

@@ -1,5 +1,23 @@
 ---
-import Redirect from "@/components/Redirect.astro"
+import Layout from "@/layouts/Layout.astro"
+import SiteHeader from "@/components/SiteHeader.astro"
+import SiteFooter from "@/components/SiteFooter.astro"
+import Directory from "@/components/Directory"
+import { getPortfolios, toDirectoryEntry } from "@/lib/portfolios"
+import { site } from "@/site"
+
+const entries = (await getPortfolios()).map(toDirectoryEntry)
 ---
 
-<Redirect to="/#portfolios" />
+<Layout title={`Browse portfolios — ${site.name}`} description={`Search ${entries.length} developer portfolios on ${site.name} by skill, role, company or location.`}>
+  <SiteHeader />
+  <main class="mx-auto max-w-3xl px-4">
+    <section class="pt-12 pb-6 sm:pt-16">
+      <p class="text-xs font-medium tracking-widest text-muted-foreground uppercase">Directory</p>
+      <h1 class="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Browse portfolios</h1>
+      <p class="mt-3 text-muted-foreground">Find people by skill, role, company or location.</p>
+    </section>
+    <Directory client:load entries={entries} submissionUrl={site.submissionUrl} />
+    <SiteFooter />
+  </main>
+</Layout>
