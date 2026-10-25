@@ -1,0 +1,127 @@
+---
+import { render } from "astro:content"
+import Layout from "@/layouts/Layout.astro"
+import SiteHeader from "@/components/SiteHeader.astro"
+import SiteFooter from "@/components/SiteFooter.astro"
+import Redirect from "@/components/Redirect.astro"
+import Experience from "@/components/Experience"
+import { ContactLinks, Education, Hero, Projects, SectionHeading, Skills } from "@/components/Sections"
+import { Separator } from "@/components/ui/separator"
+import DevOpsShowcase from "@/showcases/fpga-cicd/DevOpsShowcase"
+import { showcaseOwners } from "@/showcases/keys"
+import { getPortfolios, type Portfolio } from "@/lib/portfolios"
+import { portfolioPath, site } from "@/site"
+
+export async function getStaticPaths() {
+  const portfolios = await getPortfolios()
+  const taken = new Set(portfolios.map((p) => p.data.github))
+  const pages = portfolios.map((portfolio) => ({
+    params: { username: portfolio.data.github },
+    props: { portfolio, redirectTo: undefined },
+  }))
+  // Old usernames keep working after a rename, unless someone else now owns that name.
+  const redirects = portfolios.flatMap((portfolio) =>
+    portfolio.data.previousUsernames
+      .map((name) => name.toLowerCase())
+      .filter((name) => !taken.has(name))
+      .map((name) => ({
+        params: { username: name },
+        props: { portfolio, redirectTo: portfolioPath(portfolio.data.github) },
+      }))
+  )
+  return [...pages, ...redirects]
+}
+
+const { portfolio, redirectTo } = Astro.props as { portfolio: Portfolio; redirectTo?: string }
+const { data } = portfolio
+const { Content } = await render(portfolio)
+
+const hasShowcase = data.showcase === "fpga-cicd" && showcaseOwners[data.showcase] === data.github
+const sections = [
+  { id: "about", label: "About", show: Boolean(portfolio.body?.trim()) },
+  { id: "portfolio", label: "Portfolio", show: hasShowcase || data.projects.length > 0 },
+  { id: "experience", label: "Experience", show: data.experience.length > 0 },
+  { id: "skills", label: "Skills", show: data.skills.length > 0 },
+  {
+    id: "education",
+    label: "Education",
+    title: data.certifications.length > 0 ? "Education & Certifications" : "Education",
+    show: data.education.length > 0 || data.certifications.length > 0,
+  },
+]
+  .filter((s) => s.show)
+  .map((s, i) => ({ ...s, eyebrow: String(i + 1).padStart(2, "0") }))
+const section = Object.fromEntries(sections.map((s) => [s.id, s]))
+---
+
+{redirectTo ? (
+  <Redirect to={redirectTo} />
+) : (
+  <Layout title={`${data.name} — ${data.headline}`} description={`${data.name}: ${data.headline}. Portfolio on ${site.name}.`}>
+    <SiteHeader nav={sections.map((s) => ({ href: `#${s.id}`, label: s.label }))} />
+
+    <main class="mx-auto max-w-3xl px-4">
+      <Hero data={data} />
+
+      {section.about && (
+        <>
+          <Separator className="my-12" />
+          <section>
+            <SectionHeading id="about" eyebrow={section.about.eyebrow} title="About me" />
+            <div class="prose prose-neutral max-w-none dark:prose-invert prose-headings:tracking-tight prose-a:underline-offset-4">
+              <Content />
+            </div>
+          </section>
+        </>
+      )}
+
+      {section.portfolio && (
+        <>
+          <Separator className="my-12" />
+          <section class="space-y-6">
+            <SectionHeading id="portfolio" eyebrow={section.portfolio.eyebrow} title="Portfolio" />
+            {hasShowcase && <DevOpsShowcase client:visible />}
+            {data.projects.length > 0 && <Projects data={data} />}
+          </section>
+        </>
+      )}
+
+      {section.experience && (
+        <>
+          <Separator className="my-12" />
+          <section>
+            <SectionHeading id="experience" eyebrow={section.experience.eyebrow} title="Experience" />
+            <Experience client:visible items={data.experience} />
+          </section>
+        </>
+      )}
+
+      {section.skills && (
+        <>
+          <Separator className="my-12" />
+          <section>
+            <SectionHeading id="skills" eyebrow={section.skills.eyebrow} title="Skills" />
+            <Skills data={data} />
+          </section>
+        </>
+      )}
+
+      {section.education && (
+        <>
+          <Separator className="my-12" />
+          <section>
+            <SectionHeading id="education" eyebrow={section.education.eyebrow} title={section.education.title} />
+            <Education data={data} />
+          </section>
+        </>
+      )}
+
+      <SiteFooter>
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 border-b pb-6">
+          <p>© {new Date().getFullYear()} {data.name}</p>
+          <ContactLinks data={data} />
+        </div>
+      </SiteFooter>
+    </main>
+  </Layout>
+)}

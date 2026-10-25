@@ -3,7 +3,7 @@ import { ChevronDown, MapPin } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import type { Experience as ExperienceItem, Role } from "@/data/profile"
+import type { ExperienceItem, Role } from "@/lib/portfolios"
 
 const PREVIEW_COUNT = 3
 

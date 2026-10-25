@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { fpgaPlatform } from "@/data/profile"
+import { fpgaPlatform } from "./data"
 import type { Fleet, Runner } from "./useFleetSimulation"
 import UtilizationChart from "./UtilizationChart"
 

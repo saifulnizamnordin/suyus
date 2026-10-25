@@ -1,37 +1,32 @@
 ---
+import { Plus } from "lucide-react"
 import ThemeToggle from "@/components/ThemeToggle"
-import { profile } from "@/data/profile"
+import { site } from "@/site"
 
-const nav = [
-  { href: "/#about", label: "About" },
-  { href: "/#portfolio", label: "Portfolio" },
-  { href: "/#experience", label: "Experience" },
-  { href: "/#skills", label: "Skills" },
-  { href: "/#education", label: "Education" },
-  { href: "/blog/", label: "Blog" },
-]
-const onBlog = Astro.url.pathname.startsWith("/blog")
+interface Props {
+  nav?: { href: string; label: string }[]
+}
+
+const { nav = [] } = Astro.props
 ---
 
 <header class="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
-  <div class="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
-    <a href="/" class="font-semibold tracking-tight">{profile.shortName}</a>
+  <div class="mx-auto flex h-14 max-w-3xl items-center justify-between gap-2 px-4">
+    <a href="/" class="font-semibold tracking-tight">{site.name}</a>
     <nav class="flex items-center gap-1 text-sm">
-      {nav.map((item) => {
-        const isBlog = item.href === "/blog/"
-        return (
-          <a
-            href={item.href}
-            aria-current={isBlog && onBlog ? "page" : undefined}
-            class:list={[
-              "rounded-md px-2.5 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground aria-[current=page]:text-foreground",
-              isBlog ? "inline-block" : "hidden sm:inline-block",
-            ]}
-          >
-            {item.label}
-          </a>
-        )
-      })}
+      {nav.map((item) => (
+        <a href={item.href} class="hidden rounded-md px-2.5 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground md:inline-block">
+          {item.label}
+        </a>
+      ))}
+      <a
+        href={site.submissionUrl}
+        target="_blank"
+        rel="noreferrer"
+        class="ml-1 inline-flex h-7 items-center gap-1 rounded-md border px-2.5 text-[0.8rem] font-medium hover:bg-muted"
+      >
+        <Plus className="size-3.5" /> Submit
+      </a>
       <ThemeToggle client:load />
     </nav>
   </div>

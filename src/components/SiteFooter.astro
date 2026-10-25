@@ -1,0 +1,22 @@
+---
+import { ArrowUpRight } from "lucide-react"
+import { site } from "@/site"
+---
+
+<footer class="mt-24 border-t py-8 text-sm text-muted-foreground">
+  <slot />
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <p>
+      <a href="/" class="font-medium text-foreground hover:underline hover:underline-offset-4">{site.name}</a>
+      <span> · {site.tagline}</span>
+    </p>
+    <div class="flex flex-wrap gap-x-4 gap-y-2">
+      <a class="inline-flex items-center gap-1 hover:text-foreground" href={site.submissionUrl} target="_blank" rel="noreferrer">
+        Submit your portfolio <ArrowUpRight className="size-3.5" />
+      </a>
+      <a class="inline-flex items-center gap-1 hover:text-foreground" href={site.repo} target="_blank" rel="noreferrer">
+        Source <ArrowUpRight className="size-3.5" />
+      </a>
+    </div>
+  </div>
+</footer>

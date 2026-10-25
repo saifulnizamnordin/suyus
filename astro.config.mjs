@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   // Custom domain (public/CNAME) serves the site from the root, so no `base` is needed.
-  site: 'https://llyf.in',
+  site: 'https://suy.us',
   integrations: [react()],
 
   markdown: {

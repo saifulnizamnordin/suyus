@@ -27,3 +27,6 @@ Thumbs.db
 
 # jetbrains
 .idea/
+
+# username sync report (CI)
+sync-report.md

@@ -1,65 +1,165 @@
 ---
+import { ArrowRight, FileText, GitPullRequest, MapPin, Plus, RefreshCw, UserCheck } from "lucide-react"
 import Layout from "@/layouts/Layout.astro"
-import Experience from "@/components/Experience"
 import SiteHeader from "@/components/SiteHeader.astro"
-import PostList from "@/components/PostList.astro"
-import { getPosts } from "@/lib/blog"
-import DevOpsShowcase from "@/components/showcase/DevOpsShowcase"
-import { About, Education, Footer, Hero, SectionHeading, Skills } from "@/components/Sections"
-import { Separator } from "@/components/ui/separator"
-import { experience, profile } from "@/data/profile"
+import SiteFooter from "@/components/SiteFooter.astro"
+import { avatarUrl, getPortfolios } from "@/lib/portfolios"
+import { portfolioPath, site } from "@/site"
 
-const posts = (await getPosts()).slice(0, 3)
+const portfolios = await getPortfolios()
+
+const steps = [
+  {
+    icon: FileText,
+    title: "Copy the template",
+    body: "Fork the repository and copy templates/portfolio.md to src/content/portfolios/<your-username>.md.",
+  },
+  {
+    icon: GitPullRequest,
+    title: "Fill it in & open a PR",
+    body: "Your experience, skills and projects go in the frontmatter; the Markdown body is your About section.",
+  },
+  {
+    icon: UserCheck,
+    title: "Checked & published",
+    body: "A check confirms the file matches your GitHub account. Once merged, your page goes live.",
+  },
+]
 ---
 
-<Layout
-  title={`${profile.name} — ${profile.headline}`}
-  description="Senior Design Engineer and Cloud & DevOps engineer based in Malaysia. CI/CD, Kubernetes, multi-cloud infrastructure, FPGA tooling and C++/Qt."
->
-  <SiteHeader />
+<Layout title={`${site.name} — ${site.tagline}`} description={site.description}>
+  <SiteHeader nav={[{ href: "#portfolios", label: "Portfolios" }, { href: "#how-it-works", label: "How it works" }]} />
 
   <main class="mx-auto max-w-3xl px-4">
-    <Hero />
-
-    <Separator className="my-12" />
-    <section>
-      <SectionHeading id="about" eyebrow="01" title="About me" />
-      <About />
-    </section>
-
-    <Separator className="my-12" />
-    <section>
-      <SectionHeading id="portfolio" eyebrow="02" title="Portfolio" />
-      <DevOpsShowcase client:visible />
-    </section>
-
-    <Separator className="my-12" />
-    <section>
-      <SectionHeading id="experience" eyebrow="03" title="Experience" />
-      <Experience client:visible items={experience} />
-    </section>
-
-    <Separator className="my-12" />
-    <section>
-      <SectionHeading id="skills" eyebrow="04" title="Skills" />
-      <Skills />
-    </section>
-
-    <Separator className="my-12" />
-    <section>
-      <SectionHeading id="education" eyebrow="05" title="Education & Certifications" />
-      <Education />
-    </section>
-
-    <Separator className="my-12" />
-    <section>
-      <div class="flex items-end justify-between gap-4">
-        <SectionHeading id="blog" eyebrow="06" title="Blog" />
-        <a href="/blog/" class="mb-6 shrink-0 text-sm text-muted-foreground hover:text-foreground">View all posts →</a>
+    <section class="pt-14 pb-6 sm:pt-20">
+      <p class="text-xs font-medium tracking-widest text-muted-foreground uppercase">Open-source portfolios</p>
+      <h1 class="mt-2 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{site.tagline}</h1>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+        Every portfolio here is a single Markdown file in a public GitHub repository. Submit yours and get a page at
+        <code class="rounded bg-muted px-1.5 py-0.5 text-base text-foreground">{site.name}/p/&lt;username&gt;</code>.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-2">
+        <a
+          href={site.submissionUrl}
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/80"
+        >
+          <Plus className="size-4" /> Submit your portfolio
+        </a>
+        <a
+          href={site.templateUrl}
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-sm font-medium hover:bg-muted"
+        >
+          <FileText className="size-4" /> View the template
+        </a>
       </div>
-      <PostList posts={posts} />
     </section>
 
-    <Footer />
+    <section id="portfolios" class="scroll-mt-20 pt-12">
+      <div class="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <p class="text-xs font-medium tracking-widest text-muted-foreground uppercase">Directory</p>
+          <h2 class="mt-1 text-2xl font-semibold tracking-tight">Portfolios</h2>
+        </div>
+        <p class="text-sm text-muted-foreground tabular-nums">{portfolios.length} {portfolios.length === 1 ? "person" : "people"}</p>
+      </div>
+
+      <ul class="grid gap-3 sm:grid-cols-2">
+        {portfolios.map(({ data }) => {
+          const topSkills = data.skills.flatMap((g) => g.items).slice(0, 4)
+          return (
+            <li>
+              <a
+                href={portfolioPath(data.github)}
+                class="group flex h-full flex-col gap-3 rounded-xl border bg-card p-4 transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <div class="flex items-center gap-3">
+                  <img
+                    src={avatarUrl(data.github, 96)}
+                    alt=""
+                    width={48}
+                    height={48}
+                    loading="lazy"
+                    class="size-12 shrink-0 rounded-full bg-muted object-cover ring-1 ring-foreground/10"
+                  />
+                  <div class="min-w-0">
+                    <p class="truncate font-medium">{data.name}</p>
+                    <p class="truncate text-xs text-muted-foreground">@{data.github}</p>
+                  </div>
+                  <ArrowRight className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                </div>
+                <p class="text-sm leading-relaxed text-muted-foreground">{data.headline}</p>
+                {data.location && (
+                  <p class="flex items-center gap-1 text-xs text-muted-foreground">
+                    <MapPin className="size-3" />
+                    {data.location}
+                  </p>
+                )}
+                {topSkills.length > 0 && (
+                  <div class="mt-auto flex flex-wrap gap-1.5">
+                    {topSkills.map((s) => (
+                      <span class="rounded-full border px-2 py-0.5 text-xs">{s}</span>
+                    ))}
+                  </div>
+                )}
+              </a>
+            </li>
+          )
+        })}
+        <li>
+          <a
+            href={site.submissionUrl}
+            target="_blank"
+            rel="noreferrer"
+            class="flex h-full min-h-40 flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-4 text-center text-sm text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+          >
+            <Plus className="size-5" />
+            <span class="font-medium">Add your portfolio</span>
+            <span class="text-xs">One Markdown file, one pull request.</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section id="how-it-works" class="scroll-mt-20 pt-16">
+      <p class="text-xs font-medium tracking-widest text-muted-foreground uppercase">Submit</p>
+      <h2 class="mt-1 text-2xl font-semibold tracking-tight">How it works</h2>
+      <ol class="mt-6 grid gap-3 sm:grid-cols-3">
+        {steps.map((step, i) => (
+          <li class="rounded-xl border bg-card p-4">
+            <div class="flex items-center gap-2">
+              <span class="flex size-8 items-center justify-center rounded-md bg-muted">
+                <step.icon className="size-4" />
+              </span>
+              <span class="text-xs text-muted-foreground tabular-nums">Step {i + 1}</span>
+            </div>
+            <p class="mt-3 font-medium">{step.title}</p>
+            <p class="mt-1 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
+          </li>
+        ))}
+      </ol>
+      <div class="mt-3 flex items-start gap-3 rounded-xl bg-muted/50 p-4 text-sm">
+        <RefreshCw className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+        <p class="leading-relaxed text-muted-foreground">
+          <span class="font-medium text-foreground">Changed your GitHub username?</span> A daily job follows your GitHub account
+          ID, moves your page to <code>/p/&lt;new-username&gt;</code> and keeps the old address redirecting to it.
+        </p>
+      </div>
+      <div class="mt-6">
+        <a
+          href={site.submissionUrl}
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/80"
+        >
+          Read the submission guide <ArrowRight className="size-4" />
+        </a>
+      </div>
+    </section>
+
+    <SiteFooter />
   </main>
 </Layout>

@@ -1,8 +1,25 @@
-# saifulnizam — portfolio
+# suy.us
 
-Personal portfolio for Saiful Nizam Nordin, live at **https://llyf.in**.
+Developer portfolios, written in Markdown. Live at **https://suy.us**.
+
+Any GitHub user can add a portfolio by submitting one Markdown file. Each one gets a page at `https://suy.us/p/<github-username>`.
 
 Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/ui](https://ui.shadcn.com) (Tailwind CSS v4).
+
+**Want to add yours? Read [SUBMISSION.md](SUBMISSION.md).**
+
+## How it's organised
+
+| Path | What it is |
+| --- | --- |
+| [`src/content/portfolios/`](src/content/portfolios/) | One `<username>.md` per person. Frontmatter = structured data, body = About section |
+| [`templates/portfolio.md`](templates/portfolio.md) | Starting point for new submissions |
+| [`src/content.config.ts`](src/content.config.ts) | Schema every portfolio is validated against at build time |
+| [`src/pages/index.astro`](src/pages/index.astro) | Landing page and portfolio directory (`/`) |
+| [`src/pages/p/[username].astro`](src/pages/p/[username].astro) | Portfolio page (`/p/<username>/`), plus redirects from previous usernames |
+| [`src/showcases/`](src/showcases/) | Custom interactive sections, each tied to one portfolio via `showcase:` |
+| [`src/site.ts`](src/site.ts) | Site name, repo URL and submission links |
+| [`scripts/`](scripts/) | Submission check and username sync |
 
 ## Development
 
@@ -13,73 +30,56 @@ npm run build     # output in ./dist
 npm run preview
 ```
 
-All content (about, experience, skills, education, certifications) lives in [`src/data/profile.ts`](src/data/profile.ts). Edit that file to update the site.
+## Automation
 
-## Writing a blog post
+| Workflow | When | What it does |
+| --- | --- | --- |
+| [Deploy to GitHub Pages](.github/workflows/deploy.yml) | push to `main` | Builds and publishes the site |
+| [Validate portfolio submission](.github/workflows/validate-submission.yml) | PRs touching `src/content/portfolios/` | Checks file name, GitHub account, `githubId`, PR author, then builds |
+| [Sync portfolio usernames](.github/workflows/sync-usernames.yml) | daily 03:17 UTC, or manually | Follows each portfolio by GitHub account ID and opens a PR for renames, deleted accounts and missing IDs |
 
-Posts live in [`src/content/blog/`](src/content/blog/). Each `.md` file becomes a page at `/blog/<file-name>/` and shows up on the blog index and on the home page (latest 3).
-
-```md
----
-title: "My post title"
-description: "One-sentence summary shown in the post list."
-pubDate: 2026-10-10
-tags: ["devops", "ci-cd"]
-draft: false # true = only visible in `npm run dev`
----
-
-Post content in Markdown…
-```
-
-Frontmatter is validated at build time (see [`src/content.config.ts`](src/content.config.ts)), so a missing title or bad date fails the build instead of publishing a broken post.
-
-## shadcn/ui
-
-Add more shadcn components with:
+Run the sync locally without changing anything:
 
 ```sh
-npx shadcn@latest add <component>
+GITHUB_TOKEN=<token> node scripts/sync-usernames.mjs --dry-run
 ```
 
-## Deployment
+### One-time repository settings
 
-Every push to `main` builds the site and deploys it to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). You can also run it manually from the **Actions** tab (**Deploy to GitHub Pages → Run workflow**).
+1. **Settings → Pages → Source**: **GitHub Actions**.
+2. **Settings → Actions → General → Workflow permissions**: tick **Allow GitHub Actions to create and approve pull requests** (needed by the username sync).
+3. **Settings → Branches**: protect `main` and require the **Validate portfolio submission** check, so submissions can't be merged with failing checks.
+4. Optionally, require approval for workflows from first-time contributors (**Settings → Actions → General → Fork pull request workflows**).
 
-### One-time GitHub Pages setup
+## Custom domain: `suy.us`
 
-1. Open the repo on GitHub → **Settings → Pages**.
-2. Under **Build and deployment → Source**, choose **GitHub Actions**.
-3. Push to `main` (or re-run the workflow) and wait for the **Deploy to GitHub Pages** run to go green.
+[`public/CNAME`](public/CNAME) contains `suy.us` and is copied into every build.
 
-### Custom domain: `llyf.in`
+DNS records for `suy.us`:
 
-The file [`public/CNAME`](public/CNAME) (containing `llyf.in`) is copied into the build, which tells GitHub Pages which domain to serve.
+| Type    | Name  | Value                           |
+| ------- | ----- | ------------------------------- |
+| `A`     | `@`   | `185.199.108.153`               |
+| `A`     | `@`   | `185.199.109.153`               |
+| `A`     | `@`   | `185.199.110.153`               |
+| `A`     | `@`   | `185.199.111.153`               |
+| `AAAA`  | `@`   | `2606:50c0:8000::153`           |
+| `AAAA`  | `@`   | `2606:50c0:8001::153`           |
+| `AAAA`  | `@`   | `2606:50c0:8002::153`           |
+| `AAAA`  | `@`   | `2606:50c0:8003::153`           |
+| `CNAME` | `www` | `saifulnizamnordin.github.io`   |
 
-**1. DNS records** — at your domain registrar / DNS provider for `llyf.in`:
+Then **Settings → Pages → Custom domain**: enter `suy.us`, save, wait for the DNS check, and tick **Enforce HTTPS**. If the DNS is on Cloudflare, keep these records **DNS only** until the certificate is issued.
 
-| Type    | Name / Host | Value                     |
-| ------- | ----------- | ------------------------- |
-| `A`     | `@`         | `185.199.108.153`         |
-| `A`     | `@`         | `185.199.109.153`         |
-| `A`     | `@`         | `185.199.110.153`         |
-| `A`     | `@`         | `185.199.111.153`         |
-| `AAAA`  | `@`         | `2606:50c0:8000::153`     |
-| `AAAA`  | `@`         | `2606:50c0:8001::153`     |
-| `AAAA`  | `@`         | `2606:50c0:8002::153`     |
-| `AAAA`  | `@`         | `2606:50c0:8003::153`     |
-| `CNAME` | `www`       | `saifulnizamnordin.github.io` |
+## Renaming this repository
 
-Remove any other `A`/`AAAA`/`CNAME` records on `@` and `www` that point elsewhere. If you use Cloudflare, set these records to **DNS only** (grey cloud) until GitHub has issued the certificate.
+After renaming the repository on GitHub, update `repo` in [`src/site.ts`](src/site.ts) so the Submit buttons point at the new name. (GitHub redirects the old URL, but it's better not to rely on it.)
 
-**2. GitHub settings** — **Settings → Pages → Custom domain**: enter `llyf.in` and click **Save**. GitHub runs a DNS check; this can take from a few minutes up to 24 hours while DNS propagates.
+## Adding a showcase
 
-**3. HTTPS** — once the DNS check passes and the certificate is provisioned, tick **Enforce HTTPS**.
+A showcase is a custom React section for one person's portfolio, for things Markdown can't express (like the interactive CI/CD simulation on `/p/saifulnizamnordin`).
 
-**4. (Recommended) Verify the domain** — GitHub profile → **Settings → Pages → Add a domain**, add `llyf.in`, and create the `TXT` record it shows. This stops anyone else from claiming the domain on GitHub Pages.
-
-Check DNS from a terminal:
-
-```sh
-nslookup llyf.in
-nslookup www.llyf.in
-```
+1. Add the component under `src/showcases/<key>/`.
+2. Register `<key>` and its owner's username in [`src/showcases/keys.ts`](src/showcases/keys.ts).
+3. Render it in [`src/pages/p/[username].astro`](src/pages/p/[username].astro).
+4. Set `showcase: <key>` in the owner's portfolio file.

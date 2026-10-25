@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
-import { fpgaPlatform } from "@/data/profile"
+import { fpgaPlatform } from "./data"
 import { useFleetSimulation } from "./useFleetSimulation"
 import { DashboardPanel, KubernetesPanel, RegistryPanel, RunnerFleetPanel } from "./panels"
 
