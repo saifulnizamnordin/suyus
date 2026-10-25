@@ -8,6 +8,9 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   // Custom domain (public/CNAME) serves the site from the root, so no `base` is needed.
   site: 'https://suy.us',
+  // Pages are built as p/<username>.html, which GitHub Pages serves at /p/<username> (no trailing slash).
+  trailingSlash: 'never',
+  build: { format: 'file' },
   integrations: [react()],
 
   markdown: {

@@ -6,6 +6,15 @@ import { site } from "@/site"
 ---
 
 <Layout title={`Not found — ${site.name}`} description="This page doesn't exist.">
+  <script is:inline>
+    // Portfolios are served without a trailing slash (/p/<username>), so retry old /p/<username>/ links without it.
+    // Only that exact shape is retried, so a missing page can't redirect in a loop.
+    if (/^\/p\/[a-z0-9-]+\/$/i.test(location.pathname)) {
+      location.replace(location.pathname.slice(0, -1) + location.search + location.hash)
+    } else if (location.pathname === "/p/") {
+      location.replace("/#portfolios")
+    }
+  </script>
   <SiteHeader />
   <main class="mx-auto max-w-3xl px-4">
     <section class="pt-16">

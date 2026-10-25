@@ -16,7 +16,7 @@ Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/
 | [`templates/portfolio.md`](templates/portfolio.md) | Starting point for new submissions |
 | [`src/content.config.ts`](src/content.config.ts) | Schema every portfolio is validated against at build time |
 | [`src/pages/index.astro`](src/pages/index.astro) | Landing page and portfolio directory (`/`) |
-| [`src/pages/p/[username].astro`](src/pages/p/[username].astro) | Portfolio page (`/p/<username>/`), plus redirects from previous usernames |
+| [`src/pages/p/[username].astro`](src/pages/p/[username].astro) | Portfolio page (`/p/<username>`), plus redirects from previous usernames |
 | [`src/showcases/registry.ts`](src/showcases/registry.ts) | Finds showcases by folder; [`Showcase.tsx`](src/components/Showcase.tsx) is the single island that renders them |
 | [`src/showcases/<username>/<name>/`](src/showcases/) | Interactive React sections owned by one user, enabled with `showcases:` |
 | [`templates/showcase/`](templates/showcase/) | Starter showcase for contributors |

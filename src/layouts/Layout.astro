@@ -7,7 +7,8 @@ interface Props {
 }
 
 const { title, description } = Astro.props
-const canonical = new URL(Astro.url.pathname, Astro.site)
+// With build.format "file" the pathname is /p/<username>.html; the public URL has no extension.
+const canonical = new URL(Astro.url.pathname.replace(/(\/index)?\.html$/, "") || "/", Astro.site)
 ---
 
 <!doctype html>

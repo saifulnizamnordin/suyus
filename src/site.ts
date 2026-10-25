@@ -13,4 +13,4 @@ export const site = {
   templateUrl: `${repo}/blob/main/templates/portfolio.md`,
 }
 
-export const portfolioPath = (username: string) => `/p/${username}/`
+export const portfolioPath = (username: string) => `/p/${username}`

@@ -45,7 +45,7 @@ A pull request may only add, change or delete files in those two places.
    npm run dev
    ```
 
-   Then open `http://localhost:4321/p/<your-github-username>/`.
+   Then open `http://localhost:4321/p/<your-github-username>`.
 
 6. **Open a pull request** from your fork.
 
@@ -177,7 +177,7 @@ The schema that enforces all of this is in [`src/content.config.ts`](src/content
 
 You don't need to do anything. A scheduled job runs every day and looks up each portfolio by its **GitHub account ID**, which never changes:
 
-- **You renamed your account:** the job opens a PR that renames your portfolio file **and your showcase folder**, updates `github`, and records the old name in `previousUsernames`. Once merged, your page moves to `/p/<new-username>/` and the old address redirects there.
+- **You renamed your account:** the job opens a PR that renames your portfolio file **and your showcase folder**, updates `github`, and records the old name in `previousUsernames`. Once merged, your page moves to `/p/<new-username>` and the old address redirects there.
 - **Your account was deleted:** your portfolio is marked `status: inactive` and hidden from the site. If the account comes back, it's reactivated.
 
 ## Updating or removing your portfolio
