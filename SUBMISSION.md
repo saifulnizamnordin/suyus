@@ -1,4 +1,4 @@
-# Submit your portfolio to suy.us
+# Submit your portfolio to Suyus
 
 Any GitHub user can add a portfolio. Your page lives at:
 
@@ -116,7 +116,7 @@ Allowed file types: `.tsx`, `.ts`, `.json`, and images (`.svg`, `.png`, `.jpg`, 
 
 ### Showcase rules
 
-Showcases run on suy.us for every visitor, so they're kept self-contained:
+Showcases run on Suyus for every visitor, so they're kept self-contained:
 
 - **No network access:** no `fetch`, `XMLHttpRequest`, WebSockets or tracking. Put your data in the folder. Simulate "live" numbers instead of loading them.
 - **No other packages.** Use only the imports in the table above. You can't add npm dependencies.

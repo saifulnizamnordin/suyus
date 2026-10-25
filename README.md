@@ -1,6 +1,6 @@
-# suy.us
+# Suyus
 
-Developer portfolios, written in Markdown. Live at **https://suy.us**.
+Suyus: developer portfolios, written in Markdown. Live at **https://suy.us**.
 
 Any GitHub user can add a portfolio by submitting one Markdown file. Each one gets a page at `https://suy.us/p/<github-username>`.
 

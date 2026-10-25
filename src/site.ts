@@ -2,7 +2,8 @@
 const repo = "https://github.com/saifulnizamnordin/portfolio"
 
 export const site = {
-  name: "suy.us",
+  name: "Suyus",
+  domain: "suy.us",
   url: "https://suy.us",
   tagline: "Developer portfolios, written in Markdown.",
   description:
