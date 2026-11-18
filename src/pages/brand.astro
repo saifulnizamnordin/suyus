@@ -155,7 +155,7 @@ const donts = [
       <h2 class="text-2xl font-semibold tracking-tight" id="clear-space">Clear space & minimum size</h2>
       <div class="mt-6 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
         <div class="flex justify-center rounded-xl border bg-white p-6">
-          <!-- x = the dot's diameter; keep 2x of empty space on every side -->
+          <!-- x = the gap between the S and the edge of its tile; keep 2x of empty space on every side -->
           <div class="relative" style="padding: 1.5rem;">
             <div class="absolute inset-0 rounded-md border border-dashed border-[#4F46E5]/60 bg-[#4F46E5]/5"></div>
             <img src={`${B}/suyus-logo-color.svg`} alt="Suyus logo with clear space" class="relative h-12 w-auto" />
@@ -164,7 +164,7 @@ const donts = [
           </div>
         </div>
         <ul class="space-y-3 text-sm sm:w-64">
-          <li><span class="font-medium">Clear space:</span> <span class="text-muted-foreground">keep at least <b class="text-foreground">2x</b> empty on every side, where <b class="text-foreground">x</b> is the diameter of the dot in the mark.</span></li>
+          <li><span class="font-medium">Clear space:</span> <span class="text-muted-foreground">keep at least <b class="text-foreground">2x</b> empty on every side, where <b class="text-foreground">x</b> is the gap between the S and the edge of its tile.</span></li>
           <li><span class="font-medium">Horizontal logo:</span> <span class="text-muted-foreground">at least 24 px (or 6 mm) tall.</span></li>
           <li><span class="font-medium">Square mark:</span> <span class="text-muted-foreground">at least 16 px (or 4 mm). Below that, use the favicon as is.</span></li>
         </ul>
