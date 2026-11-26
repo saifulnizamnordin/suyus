@@ -23,14 +23,14 @@ The values live in `~/.saifulnizamnordin.env`, never in the repo:
 
 | Env file | Worker | Kind |
 | --- | --- | --- |
-| `SUYUS_POCKETBASE_URL` | `PB_URL` | var |
-| `SUYUS_GITHUB_CLIENT_ID` | `GITHUB_CLIENT_ID` | var |
+| `SUYUS_POCKETBASE_URL` | `PB_URL` | secret |
+| `SUYUS_GITHUB_CLIENT_ID` | `GITHUB_CLIENT_ID` | secret |
 | `SUYUS_GITHUB_CLIENT_SECRET` | `GITHUB_CLIENT_SECRET` | secret |
 | `SUYUS_POCKETBASE_ADMIN_EMAIL` | `PB_ADMIN_EMAIL` | secret |
 | `SUYUS_POCKETBASE_ADMIN_PASSWORD` | `PB_ADMIN_PASSWORD` | secret |
 | — (generated) | `SESSION_SECRET` | secret |
 
-`SITE_URL`, `ALLOWED_ORIGINS` and `SUYUS_REPO` are in [`wrangler.toml`](wrangler.toml).
+`SITE_URL`, `ALLOWED_ORIGINS` and `SUYUS_REPO` are in [`wrangler.toml`](wrangler.toml). Everything else is a Worker secret, so it survives every `wrangler deploy`.
 
 ## One-time setup
 
@@ -56,12 +56,18 @@ SUYUS_POCKETBASE_URL=… SUYUS_POCKETBASE_ADMIN_EMAIL=… SUYUS_POCKETBASE_ADMIN
 ```sh
 cd workers/submit
 npx wrangler login                     # or set CLOUDFLARE_API_TOKEN
+npx wrangler deploy
+npx wrangler secret put GITHUB_CLIENT_ID
 npx wrangler secret put GITHUB_CLIENT_SECRET
+npx wrangler secret put PB_URL
 npx wrangler secret put PB_ADMIN_EMAIL
 npx wrangler secret put PB_ADMIN_PASSWORD
 npx wrangler secret put SESSION_SECRET   # e.g. node -e "console.log(crypto.randomBytes(48).toString('base64url'))"
-npx wrangler deploy --var PB_URL:https://… --var GITHUB_CLIENT_ID:…
 ```
+
+The Cloudflare API token needs **Workers Scripts: Edit** (account), **Workers Routes: Edit** and **DNS: Edit** (suy.us zone), plus **Account Settings: Read**, **User Details: Read** and **Memberships: Read**.
+
+Changing `SESSION_SECRET` signs everyone out of the form; their drafts and tokens stay.
 
 The site calls `https://submit.suy.us` by default ([`src/lib/submit-api.ts`](../../src/lib/submit-api.ts)). The form checks `/health` first: while the Worker isn't deployed, it shows "The form isn't available yet" and points people to the pull request route.
 
