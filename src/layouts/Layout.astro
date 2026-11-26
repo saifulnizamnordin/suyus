@@ -1,6 +1,7 @@
 ---
 import "@/styles/global.css"
 import { site } from "@/site"
+import Splash from "@/components/Splash.astro"
 
 interface Props {
   title: string
@@ -40,9 +41,17 @@ const canonical = new URL(Astro.url.pathname.replace(/(\/index)?\.html$/, "") ||
         const dark = stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches
         document.documentElement.classList.toggle("dark", dark)
       } catch {}
+      // Arrived by clicking a link on this site: start with the splash up, before the first paint (see Splash.astro).
+      try {
+        if (sessionStorage.getItem("suyus-splash") === "1") {
+          sessionStorage.removeItem("suyus-splash")
+          document.documentElement.classList.add("splash-in")
+        }
+      } catch {}
     </script>
   </head>
   <body class="min-h-screen antialiased">
+    <Splash />
     <slot />
   </body>
 </html>

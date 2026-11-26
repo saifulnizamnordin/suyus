@@ -1,0 +1,158 @@
+---
+// Splash screen with the Suyus mark (logo only, no wordmark), shown while moving between pages of the site.
+//
+//   1. Clicking a link to another page on suy.us fades the splash in over the current page.
+//   2. The next page starts with the splash already up (Layout.astro sets `splash-in` on <html> before the
+//      first paint), then fades it out once the page is ready. It stays at least ~350 ms so it doesn't flicker.
+//
+// Skipped for new tabs, other sites, downloads and #anchor links on the same page. Safety nets: it hides
+// itself after 5 s, and when a page is restored from the back/forward cache.
+---
+
+<div id="splash" aria-hidden="true">
+  <div class="splash-inner">
+    <!-- The Suyus mark only (no wordmark); same artwork as public/brand/suyus-mark-color.svg. -->
+    <svg class="splash-logo size-14 sm:size-16" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <rect width="64" height="64" fill="#4F46E5" />
+      <path d="M57 7H14.25L57 49.75V32.5L39.75 15.25H57ZM7 57H49.75L7 14.25V31.5L24.25 48.75H7Z" fill="#fff" />
+    </svg>
+    <span class="splash-bar"><span></span></span>
+  </div>
+</div>
+
+<style is:global>
+  #splash {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    background: var(--background);
+    color: var(--foreground);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.25s ease,
+      visibility 0s linear 0.25s;
+  }
+  html.splash-in #splash,
+  html.splash-going #splash {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity 0.15s ease,
+      visibility 0s;
+  }
+  /* The incoming page shows it from the very first frame, with no fade-in. */
+  html.splash-in #splash {
+    transition: none;
+  }
+
+  .splash-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .splash-logo {
+    animation: splash-breathe 1.2s ease-in-out infinite alternate;
+  }
+  .splash-bar {
+    position: relative;
+    display: block;
+    width: 4rem;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: color-mix(in oklab, #4f46e5 18%, transparent);
+  }
+  .splash-bar > span {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 40%;
+    border-radius: inherit;
+    background: #4f46e5;
+    animation: splash-slide 0.9s ease-in-out infinite;
+  }
+
+  @keyframes splash-breathe {
+    from {
+      transform: scale(0.97);
+      opacity: 0.85;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes splash-slide {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(250%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #splash,
+    html.splash-going #splash {
+      transition: none;
+    }
+    .splash-logo,
+    .splash-bar > span {
+      animation: none;
+    }
+    .splash-bar > span {
+      width: 100%;
+      opacity: 0.6;
+    }
+  }
+</style>
+
+<script is:inline>
+  ;(() => {
+    const root = document.documentElement
+    const KEY = "suyus-splash"
+    const MIN_VISIBLE = 350 // ms since this page started loading
+    let safety
+
+    const hide = () => {
+      clearTimeout(safety)
+      root.classList.remove("splash-in", "splash-going")
+    }
+
+    // Incoming page: the splash is already showing; fade it out once the page is ready.
+    if (root.classList.contains("splash-in")) {
+      const ready = () => setTimeout(hide, Math.max(0, MIN_VISIBLE - performance.now()))
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ready, { once: true })
+      else ready()
+      safety = setTimeout(hide, 5000)
+    }
+
+    // Back/forward cache: the page comes back exactly as it was left, splash included.
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) hide()
+    })
+
+    // Outgoing page: show the splash when following a link to another page of the site.
+    document.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      const link = event.target instanceof Element ? event.target.closest("a[href]") : null
+      if (!link || link.hasAttribute("download")) return
+      if (link.target && link.target !== "_self") return
+      const url = new URL(link.href, location.href)
+      if (url.origin !== location.origin) return
+      if (url.pathname === location.pathname && url.search === location.search) return // #anchors on this page
+      if (/\.[a-z0-9]{2,4}$/i.test(url.pathname) && !/\.html?$/i.test(url.pathname)) return // files
+      try {
+        sessionStorage.setItem(KEY, "1")
+      } catch {}
+      root.classList.add("splash-going")
+      clearTimeout(safety)
+      safety = setTimeout(hide, 5000) // never leave the page covered if the navigation doesn't happen
+    })
+  })()
+</script>
