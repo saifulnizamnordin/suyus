@@ -14,6 +14,10 @@ export const site = {
   /** Chooser between the form and the pull request route. */
   submitPath: "/submit",
   formPath: "/submit/form",
+  /** GitHub Sponsors (also in .github/FUNDING.yml) and the page that explains it. */
+  sponsorUrl: "https://github.com/sponsors/saifulnizamnordin",
+  maintainer: "Saiful Nizam Nordin",
+  sponsorPath: "/sponsor",
   submissionUrl: `${repo}/blob/main/SUBMISSION.md`,
   templateUrl: `${repo}/blob/main/templates/portfolio.md`,
 }

@@ -7,7 +7,7 @@
   </a>
 </p>
 
-<p align="center"><b>Portfolios for everyone, written in Markdown.</b><br><a href="https://suy.us">suy.us</a> · <a href="https://suy.us/p">Browse</a> · <a href="https://suy.us/submit">Submit yours</a> · <a href="https://suy.us/brand">Media kit</a></p>
+<p align="center"><b>Portfolios for everyone, written in Markdown.</b><br><a href="https://suy.us">suy.us</a> · <a href="https://suy.us/p">Browse</a> · <a href="https://suy.us/submit">Submit yours</a> · <a href="https://suy.us/sponsor">Sponsor</a> · <a href="https://suy.us/brand">Media kit</a></p>
 
 # Suyus
 
@@ -119,3 +119,7 @@ Logos, colours, pronunciation and usage rules live on the [media kit page](https
 - `suyus-media-kit.zip`: everything, plus `BRAND.txt`
 
 Each logo comes as .svg and transparent .png. The site header uses [`src/components/Logo.astro`](src/components/Logo.astro), the same artwork drawn inline so the wordmark follows light and dark mode.
+
+## Sponsor
+
+Suyus is free and has no ads. If it's useful to you, you can [sponsor it on GitHub](https://github.com/sponsors/saifulnizamnordin). [suy.us/sponsor](https://suy.us/sponsor) explains what sponsorship pays for. The **Sponsor** button on this repository comes from [`.github/FUNDING.yml`](.github/FUNDING.yml).

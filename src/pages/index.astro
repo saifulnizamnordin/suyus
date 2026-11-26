@@ -1,5 +1,5 @@
 ---
-import { ArrowRight, ClipboardList, FileText, GitPullRequest, Plus, RefreshCw, UserCheck } from "lucide-react"
+import { ArrowRight, ClipboardList, FileText, GitPullRequest, Heart, Plus, RefreshCw, UserCheck } from "lucide-react"
 import Layout from "@/layouts/Layout.astro"
 import SiteHeader from "@/components/SiteHeader.astro"
 import SiteFooter from "@/components/SiteFooter.astro"
@@ -127,6 +127,25 @@ const steps = [
           class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/80"
         >
           Choose how to submit <ArrowRight className="size-4" />
+        </a>
+      </div>
+    </section>
+
+    <section id="sponsor" class="scroll-mt-20 pt-16">
+      <div class="flex flex-col gap-4 rounded-xl border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="flex items-center gap-1.5 font-medium">
+            <Heart className="size-4 text-pink-600 dark:text-pink-400" /> Free for everyone, kept going by sponsors
+          </p>
+          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+            No ads, no tracking, no paid plans. Sponsoring covers running the site and reviewing every submission.
+          </p>
+        </div>
+        <a
+          href={site.sponsorPath}
+          class="inline-flex h-9 shrink-0 items-center gap-1.5 self-start rounded-lg border px-3 text-sm font-medium hover:bg-muted sm:self-auto"
+        >
+          Sponsor Suyus <ArrowRight className="size-4" />
         </a>
       </div>
     </section>
