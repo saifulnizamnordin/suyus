@@ -58,15 +58,31 @@ const otherWays = [
       </div>
     </section>
 
-    <!-- GitHub's own sponsor card: shows the current tiers and goal. -->
+    <!-- Sponsor card in the site's own style (GitHub's embeddable card can't be styled or sized cleanly). -->
     <section class="pt-8">
-      <div class="overflow-hidden rounded-xl border">
-        <iframe
-          src={`https://github.com/sponsors/${sponsorLogin}/card`}
-          title={`Sponsor ${sponsorLogin} on GitHub`}
+      <div class="flex flex-col gap-4 rounded-xl border bg-card p-5 sm:flex-row sm:items-center">
+        <img
+          src={`https://github.com/${sponsorLogin}.png?size=128`}
+          alt=""
+          width="56"
+          height="56"
           loading="lazy"
-          class="block h-[150px] w-full border-0 sm:h-[110px]"
-        ></iframe>
+          class="size-14 shrink-0 rounded-full bg-muted ring-1 ring-foreground/10"
+        />
+        <div class="min-w-0 flex-1">
+          <p class="font-medium">Sponsor {site.maintainer} on GitHub Sponsors</p>
+          <p class="mt-0.5 text-sm text-muted-foreground">
+            Maintainer of {site.name} · <a class="underline underline-offset-4 hover:text-foreground" href={`https://github.com/${sponsorLogin}`} target="_blank" rel="noreferrer">@{sponsorLogin}</a>
+          </p>
+        </div>
+        <a
+          href={site.sponsorUrl}
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border px-3 text-sm font-medium hover:bg-muted"
+        >
+          <Heart className="size-4 text-pink-600 dark:text-pink-400" /> Sponsor
+        </a>
       </div>
     </section>
 
