@@ -32,9 +32,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          # Turns on the submission form (/submit/form). Set it under Settings → Secrets and variables → Actions → Variables.
-          PUBLIC_POCKETBASE_URL: ${{ vars.PUBLIC_POCKETBASE_URL }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

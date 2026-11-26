@@ -18,7 +18,7 @@ There are two ways to submit, both chosen at [suy.us/submit](https://suy.us/subm
 - **With a form** ([`/submit/form`](https://suy.us/submit/form)): sign in with GitHub, fill in the page step by step, and Suyus opens the pull request in your name. No Git needed. Showcases aren't available here.
 - **With a pull request**: fork, copy the template, open a PR. Full control, including showcases. See [SUBMISSION.md](SUBMISSION.md).
 
-Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/ui](https://ui.shadcn.com) (Tailwind CSS v4). The form's sign-in and drafts run on [PocketBase](https://pocketbase.io).
+Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/ui](https://ui.shadcn.com) (Tailwind CSS v4). The form runs on a Cloudflare Worker ([`workers/submit/`](workers/submit/)) with [PocketBase](https://pocketbase.io) for storage.
 
 ## How it's organised
 
@@ -35,7 +35,7 @@ Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/
 | [`templates/showcase/`](templates/showcase/) | Starter showcase for contributors |
 | [`src/pages/submit.astro`](src/pages/submit.astro) | Chooser between the form and the pull request route (`/submit`) |
 | [`src/components/submit/`](src/components/submit/) | The submission form (`/submit/form`); [`src/lib/portfolio-form.ts`](src/lib/portfolio-form.ts) turns it into the Markdown file and back |
-| [`pocketbase/`](pocketbase/) | PocketBase collections and hooks behind the form: GitHub sign-in, drafts, opening the PR — [setup](pocketbase/README.md) |
+| [`workers/submit/`](workers/submit/) | Cloudflare Worker behind the form: GitHub sign-in, drafts in PocketBase, opening the PR as the user — [setup](workers/submit/README.md) |
 | [`src/site.ts`](src/site.ts) | Site name, repo URL and submission links |
 | [`scripts/`](scripts/) | Submission check, username sync, `encrypt-email` |
 | [`workers/contact/`](workers/contact/) | Cloudflare Worker that reveals emails after a Turnstile check — [setup](workers/contact/README.md) |
@@ -49,7 +49,7 @@ npm run build     # output in ./dist
 npm run preview
 ```
 
-The form at `/submit/form` is turned off unless `PUBLIC_POCKETBASE_URL` is set, e.g. `PUBLIC_POCKETBASE_URL=https://pb.example.com npm run dev`. In production it comes from the `PUBLIC_POCKETBASE_URL` repository variable (see [pocketbase/README.md](pocketbase/README.md)).
+The form at `/submit/form` talks to the `suyus-submit` Worker at `https://submit.suy.us` (override with `PUBLIC_SUBMIT_API_URL`). If the Worker can't be reached, the form says it isn't available yet and points to the pull request route.
 
 ## Automation
 
