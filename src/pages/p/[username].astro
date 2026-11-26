@@ -103,8 +103,10 @@ const section = Object.fromEntries(sections.map((s) => [s.id, s]))
           <Separator className="my-12" />
           <section>
             <SectionHeading id="portfolio" eyebrow={section.portfolio.eyebrow} title="Portfolio" />
-            {/* grid gap, not space-y: Astro's island wrapper is display: contents, so margins don't apply to it */}
-            <div class="grid gap-6">
+            {/* grid gap, not space-y: Astro's island wrapper is display: contents, so margins don't apply to it.
+                minmax(0, 1fr): a plain grid column grows to its widest content, which let a showcase push the
+                whole page wider than a phone screen. */}
+            <div class="grid grid-cols-[minmax(0,1fr)] gap-6">
               {data.showcases.map((name) => <Showcase client:visible username={data.github} name={name} />)}
               {data.projects.length > 0 && <Projects data={data} />}
             </div>
