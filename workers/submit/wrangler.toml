@@ -1,0 +1,18 @@
+name = "suyus-submit"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Served on a subdomain of the suy.us zone (the zone must be in the same Cloudflare account).
+routes = [{ pattern = "submit.suy.us", custom_domain = true }]
+
+[vars]
+SITE_URL = "https://suy.us"
+ALLOWED_ORIGINS = "https://suy.us"
+SUYUS_REPO = "saifulnizamnordin/suyus"
+# Set at deploy time from ~/.saifulnizamnordin.env (see README): GITHUB_CLIENT_ID, PB_URL
+
+# Secrets (set with `npx wrangler secret put <NAME>`, never committed):
+#   GITHUB_CLIENT_SECRET  — the GitHub OAuth App's client secret
+#   PB_ADMIN_EMAIL        — a PocketBase superuser on the suy.us instance
+#   PB_ADMIN_PASSWORD
+#   SESSION_SECRET        — random string (32+ characters) used to sign sessions

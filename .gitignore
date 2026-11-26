@@ -35,3 +35,7 @@ sync-report.md
 workers/contact/.secrets/
 workers/contact/.dev.vars
 workers/contact/.wrangler/
+
+# submit worker secrets — never commit
+workers/submit/.dev.vars
+workers/submit/.wrangler/

@@ -1,5 +1,5 @@
-// The "Submit with a form" wizard. Sign in with GitHub (via PocketBase), fill in one step at a time — every step
-// is saved as a draft — then PocketBase commits the file to your fork and opens the pull request as you.
+// The "Submit with a form" wizard. Sign in with GitHub, fill in one step at a time (every step is saved as a draft),
+// then the suyus-submit Worker (workers/submit) commits the file to your fork and opens the pull request as you.
 import { useEffect, useMemo, useState, type ReactNode } from "react"
 import {
   AlertCircle,
@@ -15,18 +15,20 @@ import {
   Save,
   Sparkles,
 } from "lucide-react"
-import type { ClientResponseError } from "pocketbase"
 import { GithubIcon } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { AreaField, Repeater, TextField } from "@/components/submit/fields"
 import {
-  GITHUB_SCOPES,
-  formEnabled,
-  getPocketBase,
-  type DraftRecord,
-  type Submitter,
+  api,
+  clearSession,
+  getSession,
+  isAvailable,
+  signInUrl,
+  takeAuthResult,
+  type Draft,
+  type Me,
   type SubmitResult,
-} from "@/lib/pocketbase"
+} from "@/lib/submit-api"
 import {
   STEP_ABOUT,
   STEP_BASICS,
@@ -68,20 +70,17 @@ interface Props {
   siteUrl: string
 }
 
-type Phase = "loading" | "signed-out" | "ready"
+type Phase = "loading" | "unavailable" | "signed-out" | "ready"
 
-const errorText = (err: unknown) => {
-  const e = err as ClientResponseError & { message?: string }
-  return e?.response?.message || e?.message || "Something went wrong."
-}
+const errorText = (err: unknown) => (err instanceof Error && err.message) || "Something went wrong."
 
 export default function SubmitForm({ repo, repoUrl, prGuideUrl, siteUrl }: Props) {
   const [phase, setPhase] = useState<Phase>("loading")
-  const [user, setUser] = useState<Submitter | null>(null)
+  const [user, setUser] = useState<Me | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [published, setPublished] = useState<string | null>(null) // the file currently on the site, if any
   const [step, setStep] = useState<number>(STEP_BASICS)
-  const [draft, setDraft] = useState<DraftRecord | null>(null)
+  const [draft, setDraft] = useState<Draft | null>(null)
   const [saving, setSaving] = useState<"idle" | "saving" | "saved" | "error">("idle")
   const [notice, setNotice] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -98,70 +97,56 @@ export default function SubmitForm({ repo, repoUrl, prGuideUrl, siteUrl }: Props
   // ------------------------------------------------------------ session & draft
 
   useEffect(() => {
-    if (!formEnabled) return
-    const pb = getPocketBase()
-    if (!pb.authStore.isValid || pb.authStore.record?.collectionName !== "submitters") {
-      setPhase("signed-out")
-      return
-    }
-    pb.collection("submitters")
-      .authRefresh()
-      .then(({ record }) => start(record as Submitter))
-      .catch(() => {
-        pb.authStore.clear()
+    const { error: authError } = takeAuthResult() // back from GitHub: #session=… or #error=…
+    if (authError) setError(authError)
+    ;(async () => {
+      if (!(await isAvailable())) return setPhase("unavailable")
+      if (!getSession()) return setPhase("signed-out")
+      try {
+        await start(await api<Me>("/me"))
+      } catch (err) {
+        setError(errorText(err))
         setPhase("signed-out")
-      })
+      }
+    })()
   }, [])
 
-  async function start(record: Submitter) {
-    setUser(record)
-    const pb = getPocketBase()
+  async function start(me: Me) {
+    setUser(me)
     let hasDraft = false
     try {
-      const saved = await pb.collection("portfolio_drafts").getFirstListItem<DraftRecord>(pb.filter("user = {:id}", { id: record.id }))
-      hasDraft = true
-      setDraft(saved)
-      setForm(normalizeForm(saved.data))
-      setStep(Math.min(Math.max(saved.step || STEP_BASICS, STEP_BASICS), STEP_REVIEW))
-      setNotice("Welcome back. Your draft is restored.")
-    } catch {
-      setForm({ ...emptyForm(), name: record.name ?? "" })
-    }
+      const { draft: saved } = await api<{ draft: Draft | null }>("/draft")
+      if (saved) {
+        hasDraft = true
+        setDraft(saved)
+        setForm(normalizeForm(saved.data))
+        setStep(Math.min(Math.max(saved.step || STEP_BASICS, STEP_BASICS), STEP_REVIEW))
+        setNotice("Welcome back. Your draft is restored.")
+      }
+    } catch {}
+    if (!hasDraft) setForm({ ...emptyForm(), name: me.name ?? "" })
     // The published file, to start from it (no draft yet) and to tell whether anything changed.
-    if (record.githubLogin) {
-      try {
-        const res = await fetch(`https://raw.githubusercontent.com/${repo}/main/src/content/portfolios/${record.githubLogin}.md`, { cache: "no-store" })
-        if (res.ok) {
-          const text = await res.text()
-          setPublished(text)
-          if (!hasDraft) {
-            setForm(fromMarkdown(text))
-            setNotice("You already have a portfolio. We loaded it so you can update it.")
-          }
+    try {
+      const res = await fetch(`https://raw.githubusercontent.com/${repo}/main/src/content/portfolios/${me.githubLogin}.md`, { cache: "no-store" })
+      if (res.ok) {
+        const text = await res.text()
+        setPublished(text)
+        if (!hasDraft) {
+          setForm(fromMarkdown(text))
+          setNotice("You already have a portfolio. We loaded it so you can update it.")
         }
-      } catch {}
-    }
+      }
+    } catch {}
     setPhase("ready")
   }
 
-  async function signIn() {
-    setError(null)
-    const pb = getPocketBase()
-    try {
-      await pb.collection("submitters").authWithOAuth2({ provider: "github", scopes: GITHUB_SCOPES })
-      // The server fills in githubLogin after the sign-in response, so read the record again.
-      const { record } = await pb.collection("submitters").authRefresh()
-      setPhase("loading")
-      await start(record as Submitter)
-    } catch (err) {
-      setError(errorText(err))
-    }
+  function signIn() {
+    window.location.href = signInUrl(window.location.pathname)
   }
 
   async function signOut(forgetAccess: boolean) {
-    const pb = getPocketBase()
-    if (forgetAccess) await pb.send("/api/suyus/token", { method: "DELETE" }).catch(() => {})
-    pb.authStore.clear()
+    await api("/logout", { method: "POST", body: { forget: forgetAccess } }).catch(() => {})
+    clearSession()
     setUser(null)
     setDraft(null)
     setForm(emptyForm())
@@ -174,13 +159,9 @@ export default function SubmitForm({ repo, repoUrl, prGuideUrl, siteUrl }: Props
   async function save(nextStep = step) {
     if (!user) return
     setSaving("saving")
-    const pb = getPocketBase()
     try {
-      const body = { user: user.id, data: form, step: nextStep }
-      const saved = draft
-        ? await pb.collection("portfolio_drafts").update<DraftRecord>(draft.id, body)
-        : await pb.collection("portfolio_drafts").create<DraftRecord>(body)
-      setDraft(saved)
+      const { draft: saved } = await api<{ draft: Draft }>("/draft", { method: "PUT", body: { data: form, step: nextStep } })
+      setDraft((d) => ({ ...saved, prUrl: saved.prUrl || d?.prUrl || "", prNumber: saved.prNumber || d?.prNumber || 0 }))
       setSaving("saved")
     } catch {
       setSaving("error")
@@ -205,7 +186,7 @@ export default function SubmitForm({ repo, repoUrl, prGuideUrl, siteUrl }: Props
     setError(null)
     try {
       await save(STEP_REVIEW)
-      const res = await getPocketBase().send<SubmitResult>("/api/suyus/submit", { method: "POST", body: { markdown } })
+      const res = await api<SubmitResult>("/submit", { method: "POST", body: { markdown } })
       setResult(res)
       setDraft((d) => (d ? { ...d, prUrl: res.prUrl, prNumber: res.prNumber } : d))
     } catch (err) {
@@ -222,11 +203,11 @@ export default function SubmitForm({ repo, repoUrl, prGuideUrl, siteUrl }: Props
 
   // ------------------------------------------------------------ screens
 
-  if (!formEnabled) {
+  if (phase === "unavailable") {
     return (
       <Panel icon={<AlertCircle className="size-5" />} title="The form isn't available yet">
         <p>
-          Submitting with a form needs the Suyus sign-in service, which isn't set up on this site yet. You can still add your
+          Submitting with a form needs the Suyus sign-in service, which isn't reachable right now. You can still add your
           portfolio <a className="underline underline-offset-4" href={prGuideUrl}>with a pull request</a>.
         </p>
       </Panel>
