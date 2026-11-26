@@ -138,7 +138,7 @@ The PR check enforces these automatically. A maintainer still reads every showca
 
 ## What the checks do
 
-Every pull request that touches `src/content/portfolios/` or `src/showcases/` runs **Validate portfolio submission**:
+Every pull request runs two checks, and both must pass before it can be merged. **`validate`** (Validate portfolio submission) checks your files whenever the PR touches `src/content/portfolios/` or `src/showcases/`. **`build`** (CI) builds the whole site:
 
 | Check | What it means |
 | --- | --- |
@@ -149,7 +149,7 @@ Every pull request that touches `src/content/portfolios/` or `src/showcases/` ru
 | `githubId` field | If you set it, must match your account's ID |
 | Showcase layout | `src/showcases/<you>/<name>/index.tsx` with a default export, allowed file types |
 | Showcase code | Only allowed imports; no network, raw HTML, `eval` or cookies |
-| Build | The site must build: required fields and URLs are valid, and every name in `showcases` has a folder |
+| Build (`build`) | The site must build: required fields and URLs are valid, and every name in `showcases` has a folder |
 
 If a check fails, open the **Details** link on the check for the exact error.
 
