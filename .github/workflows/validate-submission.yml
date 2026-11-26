@@ -1,16 +1,18 @@
 name: Validate portfolio submission
 
+# Runs on every pull request so it can be a required check in the branch ruleset. The submission checks
+# only run when the PR changes portfolio or showcase files; otherwise the job passes straight away.
+# (A path filter on the trigger would leave a required check waiting forever on other PRs.)
+# The schema itself is checked by the build in ci.yml.
 on:
   pull_request:
-    paths:
-      - "src/content/portfolios/**"
-      - "src/showcases/**"
 
 permissions:
   contents: read
 
 jobs:
   validate:
+    name: validate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,22 +20,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Does this PR change portfolios or showcases?
+        id: files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if git diff --name-only "$BASE_SHA"...HEAD | grep -qE '^src/(content/portfolios|showcases)/'; then
+            echo "submission=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "submission=false" >> "$GITHUB_OUTPUT"
+            echo "No portfolio or showcase files changed; nothing to validate." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Setup Node
+        if: steps.files.outputs.submission == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
       - name: Install dependencies
+        if: steps.files.outputs.submission == 'true'
         run: npm ci
 
       - name: Check file name, account and author
+        if: steps.files.outputs.submission == 'true'
         run: node scripts/validate-submission.mjs
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build (validates the portfolio schema)
-        run: npm run build

@@ -56,7 +56,8 @@ The form at `/submit/form` talks to the `suyus-submit` Worker at `https://submit
 | Workflow | When | What it does |
 | --- | --- | --- |
 | [Deploy to GitHub Pages](.github/workflows/deploy.yml) | push to `main` | Builds and publishes the site |
-| [Validate portfolio submission](.github/workflows/validate-submission.yml) | PRs touching `src/content/portfolios/` | Checks file name, GitHub account, `githubId`, PR author, then builds |
+| [CI](.github/workflows/ci.yml) (`build`) | every PR to `main` | `npm ci` + `npm run build`, which also validates every portfolio against the schema |
+| [Validate portfolio submission](.github/workflows/validate-submission.yml) (`validate`) | every PR | When portfolio or showcase files changed: checks file name, GitHub account, `githubId`, PR author and showcase code. Otherwise passes straight away |
 | [Sync portfolio usernames](.github/workflows/sync-usernames.yml) | daily 03:17 UTC, or manually | Follows each portfolio by GitHub account ID and opens a PR for renames, deleted accounts and missing IDs |
 
 Run the sync locally without changing anything:
@@ -69,8 +70,13 @@ GITHUB_TOKEN=<token> node scripts/sync-usernames.mjs --dry-run
 
 1. **Settings → Pages → Source**: **GitHub Actions**.
 2. **Settings → Actions → General → Workflow permissions**: tick **Allow GitHub Actions to create and approve pull requests** (needed by the username sync).
-3. **Settings → Branches**: protect `main` and require the **Validate portfolio submission** check, so submissions can't be merged with failing checks.
-4. Optionally, require approval for workflows from first-time contributors (**Settings → Actions → General → Fork pull request workflows**).
+3. **Settings → Rules → Rulesets**: a ruleset for the default branch (`main`), set to **Active**, with:
+   - **Restrict deletions** and **Block force pushes**
+   - **Require a pull request before merging**, with 0 required approvals (GitHub doesn't let you approve your own PR)
+   - **Require status checks to pass**: `build` and `validate`. Both run on every PR, so no PR waits for a check that never starts.
+   - **Bypass list**: Repository admin → Always allow, for emergencies
+4. **Settings → General → Pull Requests**: tick **Allow auto-merge** if you want PRs to merge by themselves once the checks pass.
+5. Optionally, require approval for workflows from first-time contributors (**Settings → Actions → General → Fork pull request workflows**).
 
 ## Custom domain: `suy.us`
 
