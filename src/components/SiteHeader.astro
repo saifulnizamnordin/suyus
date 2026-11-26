@@ -1,5 +1,5 @@
 ---
-import { Plus } from "lucide-react"
+import { Heart, Plus } from "lucide-react"
 import ThemeToggle from "@/components/ThemeToggle"
 import Logo from "@/components/Logo.astro"
 import { site } from "@/site"
@@ -21,6 +21,13 @@ const { nav = [] } = Astro.props
         </a>
       ))}
       <a href="/p" class="rounded-md px-2.5 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">Browse</a>
+      <a
+        href={site.sponsorPath}
+        class="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+        aria-label="Sponsor Suyus"
+      >
+        <Heart className="size-3.5 text-pink-600 dark:text-pink-400" /><span class="hidden sm:inline">Sponsor</span>
+      </a>
       <a
         href={site.submitPath}
         class="ml-1 inline-flex h-7 items-center gap-1 rounded-md border px-2.5 text-[0.8rem] font-medium hover:bg-muted"

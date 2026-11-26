@@ -1,0 +1,118 @@
+---
+import { ArrowUpRight, Bug, Globe, Heart, Megaphone, Plus, ShieldCheck, Sparkles, Star } from "lucide-react"
+import Layout from "@/layouts/Layout.astro"
+import SiteHeader from "@/components/SiteHeader.astro"
+import SiteFooter from "@/components/SiteFooter.astro"
+import { site } from "@/site"
+
+const sponsorLogin = site.sponsorUrl.split("/").pop()
+
+const funds = [
+  {
+    icon: Globe,
+    title: "Running the site",
+    body: "The suy.us domain, the sign-in and submission service behind the form, and the database that keeps your drafts.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Reviewing submissions",
+    body: "Every pull request is checked before it goes live, and every showcase is read by hand, so pages stay safe for visitors.",
+  },
+  {
+    icon: Sparkles,
+    title: "Making it better",
+    body: "New features, fixes and design work, so your page keeps looking good without you lifting a finger.",
+  },
+]
+
+const otherWays = [
+  { icon: Star, label: "Star the repository", body: "It helps more people find Suyus.", href: site.repo, external: true },
+  { icon: Plus, label: "Add your portfolio", body: "Every page makes the directory more useful.", href: site.submitPath, external: false },
+  { icon: Megaphone, label: "Share your page", body: "Link suy.us/p/<you> from your profile or CV.", href: "/p", external: false },
+  { icon: Bug, label: "Report a problem", body: "Something broken or confusing? Open an issue.", href: `${site.repo}/issues`, external: true },
+]
+---
+
+<Layout title={`Sponsor — ${site.name}`} description={`${site.name} is free and open source. Sponsor it on GitHub to keep it running for everyone.`}>
+  <SiteHeader />
+  <main class="mx-auto max-w-3xl px-4">
+    <section class="pt-12 pb-4 sm:pt-16">
+      <p class="flex items-center gap-1.5 text-xs font-medium tracking-widest text-muted-foreground uppercase">
+        <Heart className="size-3.5 text-pink-600 dark:text-pink-400" /> Sponsor
+      </p>
+      <h1 class="mt-1 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">Keep Suyus free for everyone</h1>
+      <p class="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+        Suyus is free and open source: no ads, no tracking, no paid plans. If your page here has helped you, or you'd like
+        more people to have one, you can support it through GitHub Sponsors. Any amount helps, one-time or monthly.
+      </p>
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <a
+          href={site.sponsorUrl}
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/80"
+        >
+          <Heart className="size-4" /> Sponsor on GitHub <ArrowUpRight className="size-4" />
+        </a>
+        <span class="text-sm text-muted-foreground">Payments are handled by GitHub.</span>
+      </div>
+    </section>
+
+    <!-- GitHub's own sponsor card: shows the current tiers and goal. -->
+    <section class="pt-8">
+      <div class="overflow-hidden rounded-xl border">
+        <iframe
+          src={`https://github.com/sponsors/${sponsorLogin}/card`}
+          title={`Sponsor ${sponsorLogin} on GitHub`}
+          loading="lazy"
+          class="block h-[150px] w-full border-0 sm:h-[110px]"
+        ></iframe>
+      </div>
+    </section>
+
+    <section class="pt-14">
+      <h2 class="text-2xl font-semibold tracking-tight">What your support pays for</h2>
+      <ul class="mt-6 grid gap-3 sm:grid-cols-3">
+        {funds.map((f) => (
+          <li class="rounded-xl border bg-card p-4">
+            <span class="flex size-8 items-center justify-center rounded-md bg-muted">
+              <f.icon className="size-4" />
+            </span>
+            <p class="mt-3 font-medium">{f.title}</p>
+            <p class="mt-1 text-sm leading-relaxed text-muted-foreground">{f.body}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="pt-14">
+      <h2 class="text-2xl font-semibold tracking-tight">Other ways to help</h2>
+      <p class="mt-2 text-muted-foreground">Money isn't the only way. These help just as much.</p>
+      <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+        {otherWays.map((w) => (
+          <li>
+            <a
+              href={w.href}
+              {...(w.external ? { target: "_blank", rel: "noreferrer" } : {})}
+              class="flex h-full items-start gap-3 rounded-xl border bg-card p-4 transition-colors hover:bg-muted/50"
+            >
+              <w.icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+              <span>
+                <span class="flex items-center gap-1 text-sm font-medium">
+                  {w.label} {w.external && <ArrowUpRight className="size-3.5 text-muted-foreground" />}
+                </span>
+                <span class="mt-0.5 block text-sm text-muted-foreground">{w.body}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <p class="pt-14 text-sm text-muted-foreground">
+      Thank you. Every sponsor, star and portfolio keeps this going.
+    </p>
+
+    <SiteFooter />
+  </main>
+</Layout>

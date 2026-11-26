@@ -1,5 +1,5 @@
 ---
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, Heart } from "lucide-react"
 import Logo from "@/components/Logo.astro"
 import { site } from "@/site"
 ---
@@ -13,6 +13,9 @@ import { site } from "@/site"
     </p>
     <div class="flex flex-wrap gap-x-4 gap-y-2">
       <a class="hover:text-foreground" href={site.submitPath}>Submit your portfolio</a>
+      <a class="inline-flex items-center gap-1 hover:text-foreground" href={site.sponsorPath}>
+        <Heart className="size-3.5 text-pink-600 dark:text-pink-400" /> Sponsor
+      </a>
       <a class="hover:text-foreground" href="/brand">Media kit</a>
       <a class="inline-flex items-center gap-1 hover:text-foreground" href={site.repo} target="_blank" rel="noreferrer">
         Source <ArrowUpRight className="size-3.5" />
