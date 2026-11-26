@@ -22,9 +22,7 @@ const { nav = [] } = Astro.props
       ))}
       <a href="/p" class="rounded-md px-2.5 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">Browse</a>
       <a
-        href={site.submissionUrl}
-        target="_blank"
-        rel="noreferrer"
+        href={site.submitPath}
         class="ml-1 inline-flex h-7 items-center gap-1 rounded-md border px-2.5 text-[0.8rem] font-medium hover:bg-muted"
       >
         <Plus className="size-3.5" /> Submit

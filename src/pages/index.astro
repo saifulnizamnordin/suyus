@@ -1,5 +1,5 @@
 ---
-import { ArrowRight, FileText, GitPullRequest, Plus, RefreshCw, UserCheck } from "lucide-react"
+import { ArrowRight, ClipboardList, FileText, GitPullRequest, Plus, RefreshCw, UserCheck } from "lucide-react"
 import Layout from "@/layouts/Layout.astro"
 import SiteHeader from "@/components/SiteHeader.astro"
 import SiteFooter from "@/components/SiteFooter.astro"
@@ -13,14 +13,14 @@ const featured = portfolios.slice(0, HOME_LIMIT).map(toDirectoryEntry)
 
 const steps = [
   {
-    icon: FileText,
-    title: "Copy the template",
-    body: "Fork the repository and copy templates/portfolio.md to src/content/portfolios/<your-username>.md.",
+    icon: ClipboardList,
+    title: "Fill in a form, or write the file",
+    body: "Sign in with GitHub and fill in your page step by step. Prefer Git? Copy the Markdown template instead.",
   },
   {
     icon: GitPullRequest,
-    title: "Fill it in & open a PR",
-    body: "Your experience, skills and projects go in the frontmatter; the Markdown body is your About section.",
+    title: "A pull request in your name",
+    body: "The form opens it for you; with Git you open it yourself. Either way, your page is one Markdown file.",
   },
   {
     icon: UserCheck,
@@ -38,14 +38,13 @@ const steps = [
       <p class="text-xs font-medium tracking-widest text-muted-foreground uppercase">Open-source portfolios</p>
       <h1 class="mt-2 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{site.tagline}</h1>
       <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-        Every portfolio here is a single Markdown file in a public GitHub repository. Submit yours and get a page at
+        A free, simple page for anyone with a GitHub account: designers, writers, engineers, students. Fill in a short form
+        (or write one Markdown file) and get a page at
         <code class="rounded bg-muted px-1.5 py-0.5 text-base text-foreground">{site.domain}/p/&lt;username&gt;</code>.
       </p>
       <div class="mt-6 flex flex-wrap gap-2">
         <a
-          href={site.submissionUrl}
-          target="_blank"
-          rel="noreferrer"
+          href={site.submitPath}
           class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/80"
         >
           <Plus className="size-4" /> Submit your portfolio
@@ -80,14 +79,12 @@ const steps = [
         ))}
         <li>
           <a
-            href={site.submissionUrl}
-            target="_blank"
-            rel="noreferrer"
+            href={site.submitPath}
             class="flex h-full min-h-40 flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-4 text-center text-sm text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
           >
             <Plus className="size-5" />
             <span class="font-medium">Add your portfolio</span>
-            <span class="text-xs">One Markdown file, one pull request.</span>
+            <span class="text-xs">Fill in a form or open a pull request.</span>
           </a>
         </li>
       </ul>
@@ -126,12 +123,10 @@ const steps = [
       </div>
       <div class="mt-6">
         <a
-          href={site.submissionUrl}
-          target="_blank"
-          rel="noreferrer"
+          href={site.submitPath}
           class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/80"
         >
-          Read the submission guide <ArrowRight className="size-4" />
+          Choose how to submit <ArrowRight className="size-4" />
         </a>
       </div>
     </section>

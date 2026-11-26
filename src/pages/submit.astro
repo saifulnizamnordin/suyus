@@ -1,0 +1,95 @@
+---
+import { ArrowRight, ArrowUpRight, Check, ClipboardList, GitPullRequest, Minus } from "lucide-react"
+import Layout from "@/layouts/Layout.astro"
+import SiteHeader from "@/components/SiteHeader.astro"
+import SiteFooter from "@/components/SiteFooter.astro"
+import { site } from "@/site"
+
+const options = [
+  {
+    icon: ClipboardList,
+    title: "Submit with a form",
+    badge: "Easiest",
+    body: "Sign in with GitHub and fill in your page step by step. Your progress is saved, and we open the pull request for you.",
+    points: [
+      { ok: true, text: "No Git or Markdown needed" },
+      { ok: true, text: "Basics, about, projects, experience, skills, education and certifications" },
+      { ok: true, text: "Come back any time to update your page" },
+      { ok: false, text: "No custom showcases (interactive designs in the Portfolio section)" },
+    ],
+    cta: "Start the form",
+    href: site.formPath,
+    external: false,
+    primary: true,
+  },
+  {
+    icon: GitPullRequest,
+    title: "Submit with a pull request",
+    badge: "Full control",
+    body: "Fork the repository, write one Markdown file from the template, and open a pull request yourself.",
+    points: [
+      { ok: true, text: "Everything the form can do" },
+      { ok: true, text: "Custom showcases: your own React components" },
+      { ok: true, text: "Preview your page locally before you submit" },
+      { ok: false, text: "Needs a little Git and Markdown" },
+    ],
+    cta: "Read the guide",
+    href: site.submissionUrl,
+    external: true,
+    primary: false,
+  },
+]
+---
+
+<Layout title={`Submit your portfolio — ${site.name}`} description="Two ways to get your page on Suyus: fill in a form, or open a pull request with one Markdown file.">
+  <SiteHeader />
+  <main class="mx-auto max-w-3xl px-4">
+    <section class="pt-12 pb-4 sm:pt-16">
+      <p class="text-xs font-medium tracking-widest text-muted-foreground uppercase">Submit</p>
+      <h1 class="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Add your portfolio</h1>
+      <p class="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+        Pick whichever suits you. Both end the same way: a pull request in your name, a quick check, and your page at
+        <code class="rounded bg-muted px-1.5 py-0.5 text-foreground">{site.domain}/p/&lt;username&gt;</code>.
+      </p>
+    </section>
+
+    <div class="mt-8 grid gap-3 sm:grid-cols-2">
+      {options.map((o) => (
+        <div class:list={["flex flex-col rounded-xl border bg-card p-5", o.primary && "ring-1 ring-primary/40"]}>
+          <div class="flex items-center justify-between gap-2">
+            <span class="flex size-9 items-center justify-center rounded-md bg-muted">
+              <o.icon className="size-4" />
+            </span>
+            <span class="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">{o.badge}</span>
+          </div>
+          <h2 class="mt-4 text-lg font-semibold tracking-tight">{o.title}</h2>
+          <p class="mt-1 text-sm leading-relaxed text-muted-foreground">{o.body}</p>
+          <ul class="mt-4 flex-1 space-y-2 text-sm">
+            {o.points.map((p) => (
+              <li class="flex gap-2">
+                {p.ok ? <Check className="mt-0.5 size-4 shrink-0 text-good" /> : <Minus className="mt-0.5 size-4 shrink-0 text-muted-foreground" />}
+                <span class:list={[!p.ok && "text-muted-foreground"]}>{p.text}</span>
+              </li>
+            ))}
+          </ul>
+          <a
+            href={o.href}
+            {...(o.external ? { target: "_blank", rel: "noreferrer" } : {})}
+            class:list={[
+              "mt-5 inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium",
+              o.primary ? "bg-primary text-primary-foreground hover:bg-primary/80" : "border hover:bg-muted",
+            ]}
+          >
+            {o.cta} {o.external ? <ArrowUpRight className="size-4" /> : <ArrowRight className="size-4" />}
+          </a>
+        </div>
+      ))}
+    </div>
+
+    <p class="mt-6 text-sm text-muted-foreground">
+      Already have a page? Use either route to update it. The form loads your current portfolio when you sign in.
+    </p>
+
+    <SiteFooter />
+  </main>
+</Layout>

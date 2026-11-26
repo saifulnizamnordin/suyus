@@ -1,0 +1,35 @@
+---
+import { ArrowLeft } from "lucide-react"
+import Layout from "@/layouts/Layout.astro"
+import SiteHeader from "@/components/SiteHeader.astro"
+import SiteFooter from "@/components/SiteFooter.astro"
+import SubmitForm from "@/components/submit/SubmitForm"
+import { site } from "@/site"
+---
+
+<Layout title={`Submit with a form — ${site.name}`} description="Create or update your Suyus portfolio step by step, without Git. Sign in with GitHub and we open the pull request for you.">
+  <SiteHeader />
+  <main class="mx-auto max-w-3xl px-4">
+    <section class="pt-12 pb-8 sm:pt-16">
+      <a href={site.submitPath} class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <ArrowLeft className="size-4" /> Ways to submit
+      </a>
+      <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Submit with a form</h1>
+      <p class="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+        Fill in your page one step at a time. No Git or Markdown needed: when you're done, we open the pull request on GitHub for you.
+      </p>
+    </section>
+
+    <SubmitForm
+      client:only="react"
+      repo={site.repoSlug}
+      repoUrl={site.repo}
+      prGuideUrl={site.submissionUrl}
+      siteUrl={site.url}
+    >
+      <p slot="fallback" class="py-16 text-sm text-muted-foreground">Loading the form…</p>
+    </SubmitForm>
+
+    <SiteFooter />
+  </main>
+</Layout>

@@ -1,14 +1,19 @@
-// Site-wide settings. Update `repo` here if the GitHub repository is renamed.
-const repo = "https://github.com/saifulnizamnordin/suyus"
+// Site-wide settings. Update `repoSlug` here if the GitHub repository is renamed.
+const repoSlug = "saifulnizamnordin/suyus"
+const repo = `https://github.com/${repoSlug}`
 
 export const site = {
   name: "Suyus",
   domain: "suy.us",
   url: "https://suy.us",
-  tagline: "Developer portfolios, written in Markdown.",
+  tagline: "Portfolios for everyone, written in Markdown.",
   description:
-    "Open-source portfolio pages for GitHub users. Submit one Markdown file and get your own page at suy.us/p/<username>.",
+    "Free, open-source portfolio pages for anyone with a GitHub account. Fill in a form or submit one Markdown file, and get your own page at suy.us/p/<username>.",
   repo,
+  repoSlug,
+  /** Chooser between the form and the pull request route. */
+  submitPath: "/submit",
+  formPath: "/submit/form",
   submissionUrl: `${repo}/blob/main/SUBMISSION.md`,
   templateUrl: `${repo}/blob/main/templates/portfolio.md`,
 }
