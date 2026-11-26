@@ -8,6 +8,8 @@ https://suy.us/p/<your-github-username>
 
 A portfolio is one Markdown file in this repository, plus optional **showcases**: small interactive React sections for things Markdown can't show. You submit both with a pull request.
 
+> **Rather not use Git?** Use the form at **[suy.us/submit/form](https://suy.us/submit/form)**. Sign in with GitHub, fill in your page step by step, and Suyus forks this repository to your account and opens the pull request for you. Everything below works there except showcases. The same checks run either way.
+
 ## What you can change
 
 Everything you own is named after your GitHub username:
@@ -206,3 +208,5 @@ You don't need to do anything. A scheduled job runs every day and looks up each 
 ## Updating or removing your portfolio
 
 Open another pull request that edits or deletes your file and showcase folder. The same checks apply.
+
+To update it with the form instead, sign in at [suy.us/submit/form](https://suy.us/submit/form): it loads your current portfolio, and submitting opens a new pull request, or adds to the one you already have open. Your showcases are left as they are.

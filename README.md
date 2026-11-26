@@ -7,15 +7,18 @@
   </a>
 </p>
 
-<p align="center"><b>Developer portfolios, written in Markdown.</b><br><a href="https://suy.us">suy.us</a> · <a href="https://suy.us/p">Browse</a> · <a href="SUBMISSION.md">Submit yours</a> · <a href="https://suy.us/brand">Media kit</a></p>
+<p align="center"><b>Portfolios for everyone, written in Markdown.</b><br><a href="https://suy.us">suy.us</a> · <a href="https://suy.us/p">Browse</a> · <a href="https://suy.us/submit">Submit yours</a> · <a href="https://suy.us/brand">Media kit</a></p>
 
 # Suyus
 
-Any GitHub user can add a portfolio by submitting one Markdown file. Each one gets a page at `https://suy.us/p/<github-username>`.
+Anyone with a GitHub account can add a portfolio. Each one is a single Markdown file and gets a page at `https://suy.us/p/<github-username>`.
 
-Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/ui](https://ui.shadcn.com) (Tailwind CSS v4).
+There are two ways to submit, both chosen at [suy.us/submit](https://suy.us/submit):
 
-**Want to add yours? Read [SUBMISSION.md](SUBMISSION.md).**
+- **With a form** ([`/submit/form`](https://suy.us/submit/form)): sign in with GitHub, fill in the page step by step, and Suyus opens the pull request in your name. No Git needed. Showcases aren't available here.
+- **With a pull request**: fork, copy the template, open a PR. Full control, including showcases. See [SUBMISSION.md](SUBMISSION.md).
+
+Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/ui](https://ui.shadcn.com) (Tailwind CSS v4). The form's sign-in and drafts run on [PocketBase](https://pocketbase.io).
 
 ## How it's organised
 
@@ -30,6 +33,9 @@ Built with [Astro](https://astro.build), [React](https://react.dev) and [shadcn/
 | [`src/showcases/registry.ts`](src/showcases/registry.ts) | Finds showcases by folder; [`Showcase.tsx`](src/components/Showcase.tsx) is the single island that renders them |
 | [`src/showcases/<username>/<name>/`](src/showcases/) | Interactive React sections owned by one user, enabled with `showcases:` |
 | [`templates/showcase/`](templates/showcase/) | Starter showcase for contributors |
+| [`src/pages/submit.astro`](src/pages/submit.astro) | Chooser between the form and the pull request route (`/submit`) |
+| [`src/components/submit/`](src/components/submit/) | The submission form (`/submit/form`); [`src/lib/portfolio-form.ts`](src/lib/portfolio-form.ts) turns it into the Markdown file and back |
+| [`pocketbase/`](pocketbase/) | PocketBase collections and hooks behind the form: GitHub sign-in, drafts, opening the PR — [setup](pocketbase/README.md) |
 | [`src/site.ts`](src/site.ts) | Site name, repo URL and submission links |
 | [`scripts/`](scripts/) | Submission check, username sync, `encrypt-email` |
 | [`workers/contact/`](workers/contact/) | Cloudflare Worker that reveals emails after a Turnstile check — [setup](workers/contact/README.md) |
@@ -42,6 +48,8 @@ npm run dev       # http://localhost:4321
 npm run build     # output in ./dist
 npm run preview
 ```
+
+The form at `/submit/form` is turned off unless `PUBLIC_POCKETBASE_URL` is set, e.g. `PUBLIC_POCKETBASE_URL=https://pb.example.com npm run dev`. In production it comes from the `PUBLIC_POCKETBASE_URL` repository variable (see [pocketbase/README.md](pocketbase/README.md)).
 
 ## Automation
 

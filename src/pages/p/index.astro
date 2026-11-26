@@ -9,7 +9,7 @@ import { site } from "@/site"
 const entries = (await getPortfolios()).map(toDirectoryEntry)
 ---
 
-<Layout title={`Browse portfolios — ${site.name}`} description={`Search ${entries.length} developer portfolios on ${site.name} by skill, role, company or location.`}>
+<Layout title={`Browse portfolios — ${site.name}`} description={`Search ${entries.length} portfolios on ${site.name} by skill, role, company or location.`}>
   <SiteHeader />
   <main class="mx-auto max-w-3xl px-4">
     <section class="pt-12 pb-6 sm:pt-16">
