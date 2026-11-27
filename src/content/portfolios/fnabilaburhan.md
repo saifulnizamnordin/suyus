@@ -33,7 +33,7 @@ experience:
     roles:
       - title: Medical Records Clerk
         period: Jul 2017 – Jan 2019
-        location: Kuala Lumpur, Malaysia
+        location: Bangsar, Kuala Lumpur, Malaysia
         summary: "Handled day-to-day medical records work: filing, retrieving and tracking patient folders for clinics and wards, processing record requests, and keeping the records system up to date and confidential."
       - title: Industrial Trainee
         period: Feb 2017 – Jun 2017
