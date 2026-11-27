@@ -3,9 +3,9 @@ import { readFileSync, readdirSync, writeFileSync } from "node:fs"
 import { basename, join } from "node:path"
 import YAML from "yaml"
 
-export const PORTFOLIO_DIR = "src/content/portfolios"
-export const SHOWCASE_DIR = "src/showcases"
-export const USERNAME_RE = /^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9])){0,38}$/
+import { PORTFOLIO_DIR } from "./submission-rules.mjs"
+
+export { PORTFOLIO_DIR, SHOWCASE_DIR, USERNAME_RE } from "./submission-rules.mjs"
 
 const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/
 

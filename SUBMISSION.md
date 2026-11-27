@@ -51,7 +51,7 @@ A pull request may only add, change or delete files in those two places.
 
 6. **Open a pull request** from your fork.
 
-Once the checks pass and a maintainer merges your PR, your page is published automatically.
+If your PR only changes your own portfolio file (and showcase folder) and the checks pass, it's **merged automatically** and your page goes live a minute or two later. Otherwise it gets a `needs-review` label and a comment saying why, and a maintainer merges it.
 
 ## Showcases
 
@@ -126,7 +126,20 @@ Showcases run on Suyus for every visitor, so they're kept self-contained:
 - **No cookies, and nothing outside your own folder.** No `../` imports.
 - **Label made-up numbers.** If your showcase simulates data, say so on screen (e.g. "Simulation for illustration").
 
-The PR check enforces these automatically. A maintainer still reads every showcase before merging, and may ask for changes.
+The PR check enforces these automatically.
+
+### Merged automatically, or reviewed
+
+A showcase is merged without waiting for a maintainer when it **stays inside its own box in the Portfolio section**. Anything that could reach the rest of the page sends it to a maintainer instead (it isn't rejected, it just waits):
+
+- `window`, `document`, `navigator`, `location`, browser storage, `top`/`parent`, `open()`, workers, `postMessage`
+- elements React moves into the page `<head>` or that embed other things: `<title>`, `<meta>`, `<link>`, `<style>`, `<form>`, `<object>`, `<embed>`, portals
+- images or media loaded from other sites (import them from your folder instead; links with `<a href>` are fine)
+- `fixed` positioning, which would cover the rest of the page
+- anything that hides code from the check: `constructor`/`prototype`/`Reflect`/`Proxy`, `atob`, `String.fromCharCode`, `\x`/`\u` escapes, `"a" + "b"` literal joins, property names built from strings
+- SVGs with scripts, event handlers or external links; files over 120 KB (code) or 1 MB (images)
+
+The `validate` check's summary tells you whether your showcase passes these rules.
 
 ## Rules
 
@@ -147,9 +160,10 @@ Every pull request runs two checks, and both must pass before it can be merged. 
 | Account exists | The username must belong to a real GitHub account |
 | `github` field | Must match the file name |
 | `githubId` field | If you set it, must match your account's ID |
+| About text | Plain Markdown: no HTML tags, links only to `https://`, `http://`, `mailto:`, `#` or `/` |
 | Showcase layout | `src/showcases/<you>/<name>/index.tsx` with a default export, allowed file types |
 | Showcase code | Only allowed imports; no network, raw HTML, `eval` or cookies |
-| Build (`build`) | The site must build: required fields and URLs are valid, and every name in `showcases` has a folder |
+| Build (`build`) | The site must build: required fields are there, links are full `http(s)://` URLs, and every name in `showcases` has a folder |
 
 If a check fails, open the **Details** link on the check for the exact error.
 
