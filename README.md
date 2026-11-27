@@ -58,6 +58,7 @@ The form at `/submit/form` talks to the `suyus-submit` Worker at `https://submit
 | [Deploy to GitHub Pages](.github/workflows/deploy.yml) | push to `main` | Builds and publishes the site |
 | [CI](.github/workflows/ci.yml) (`build`) | every PR to `main` | `npm ci` + `npm run build`, which also validates every portfolio against the schema |
 | [Validate portfolio submission](.github/workflows/validate-submission.yml) (`validate`) | every PR | When portfolio or showcase files changed: checks file name, GitHub account, `githubId`, PR author and showcase code. Otherwise passes straight away |
+| [Auto-merge portfolio submissions](.github/workflows/automerge.yml) | after `build` and `validate` finish on a PR | Merges the PR and starts the deploy when it only changes the author's own portfolio file and showcase folder and passes the strict rules in [`scripts/submission-rules.mjs`](scripts/submission-rules.mjs). Otherwise labels it `needs-review` and comments why. Never runs the PR's code |
 | [Sync portfolio usernames](.github/workflows/sync-usernames.yml) | daily 03:17 UTC, or manually | Follows each portfolio by GitHub account ID and opens a PR for renames, deleted accounts and missing IDs |
 
 Run the sync locally without changing anything:
@@ -65,6 +66,14 @@ Run the sync locally without changing anything:
 ```sh
 GITHUB_TOKEN=<token> node scripts/sync-usernames.mjs --dry-run
 ```
+
+Check what auto-merge would do with a PR, without merging, labelling or commenting:
+
+```sh
+GITHUB_TOKEN=<token> REPO=saifulnizamnordin/suyus DRY_RUN=1 PR_NUMBER=<n> node scripts/automerge.mjs
+```
+
+Auto-merge switches, under **Settings → Secrets and variables → Actions → Variables**: `AUTOMERGE=false` turns it off; `AUTOMERGE_SHOWCASES=false` makes every showcase wait for a review while portfolio files still merge automatically.
 
 ### One-time repository settings
 
@@ -76,7 +85,7 @@ GITHUB_TOKEN=<token> node scripts/sync-usernames.mjs --dry-run
    - **Require status checks to pass**: `build` and `validate`. Both run on every PR, so no PR waits for a check that never starts.
    - **Bypass list**: Repository admin → Always allow, for emergencies
 4. **Settings → General → Pull Requests**: tick **Allow auto-merge** if you want PRs to merge by themselves once the checks pass.
-5. Optionally, require approval for workflows from first-time contributors (**Settings → Actions → General → Fork pull request workflows**).
+5. **Settings → Actions → General → Fork pull request workflows**: GitHub asks a maintainer to approve the checks for first-time contributors by default, and auto-merge waits until they've run. Choose **Require approval for first-time contributors who are new to GitHub** so new accounts still wait but regular people's PRs merge on their own.
 
 ## Custom domain: `suy.us`
 

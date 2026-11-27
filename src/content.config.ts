@@ -2,6 +2,9 @@ import { defineCollection } from "astro:content"
 import { glob } from "astro/loaders"
 import { z } from "astro/zod"
 
+// Links rendered as <a href>: http(s) only, so a `javascript:` URL can never end up on a page.
+const webUrl = z.url({ protocol: /^https?$/, error: "Use a full http:// or https:// link" })
+
 // One Markdown file per person: src/content/portfolios/<github-username>.md
 // The frontmatter holds structured data; the Markdown body is the "About" section.
 // Keep templates/portfolio.md and SUBMISSION.md in sync with this schema.
@@ -35,8 +38,8 @@ const portfolios = defineCollection({
       .string()
       .regex(/^v1\.[A-Za-z0-9_-]{300,400}$/, "Use the value printed by `npm run encrypt-email`")
       .optional(),
-    linkedin: z.url().optional(),
-    website: z.url().optional(),
+    linkedin: webUrl.optional(),
+    website: webUrl.optional(),
     // Managed by the username sync job.
     status: z.enum(["active", "inactive"]).default("active"),
     previousUsernames: z.array(z.string()).default([]),
@@ -47,7 +50,7 @@ const portfolios = defineCollection({
         z.object({
           title: z.string(),
           summary: z.string(),
-          url: z.url().optional(),
+          url: webUrl.optional(),
           tags: z.array(z.string()).default([]),
           stats: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
         })
@@ -81,7 +84,7 @@ const portfolios = defineCollection({
           issuer: z.string(),
           issued: z.string().optional(),
           credentialId: z.string().optional(),
-          url: z.url().optional(),
+          url: webUrl.optional(),
           skills: z.array(z.string()).default([]),
         })
       )

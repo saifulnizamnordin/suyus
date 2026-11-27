@@ -1,0 +1,57 @@
+name: Auto-merge portfolio submissions
+
+# After `build` (CI) and `validate` finish on a pull request, merge it if it only changes the author's own
+# portfolio file and showcase folder and passes every rule in scripts/automerge.mjs. Anything else gets a
+# `needs-review` label and a comment, and waits for a maintainer.
+#
+# workflow_run runs this file from the default branch with a write token, even for PRs from forks.
+# That's why it must never check out or run the PR's code: it checks out only this repo's scripts/ and
+# reads the PR's files through the API as text.
+#
+# Switches (Settings → Secrets and variables → Actions → Variables):
+#   AUTOMERGE = false            turns auto-merge off completely
+#   AUTOMERGE_SHOWCASES = false  showcases always wait for a review; portfolio files still auto-merge
+on:
+  workflow_run:
+    workflows: ["CI", "Validate portfolio submission"]
+    types: [completed]
+
+permissions:
+  contents: write # merge
+  pull-requests: write # merge, label
+  issues: write # comment
+  actions: write # start the deploy after merging
+  checks: read
+
+concurrency:
+  group: automerge-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+
+jobs:
+  automerge:
+    name: automerge
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      vars.AUTOMERGE != 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the trusted scripts (default branch, never the PR)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: scripts
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Merge if eligible
+        run: node scripts/automerge.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          AUTOMERGE_SHOWCASES: ${{ vars.AUTOMERGE_SHOWCASES }}
