@@ -13,7 +13,7 @@ experience:
     roles:
       - title: Dental Surgery Assistant
         period: Sep 2023 – Present
-        location: Selangor,  Malaysia
+        location: Kajang, Selangor,  Malaysia
         summary: Assist dentists during treatments and procedures, prepare and sterilise instruments, and keep the surgery ready between patients. Manage patient records and appointments, and help patients feel at ease before and after treatment.
   - company: Career break
     type: Full-time
