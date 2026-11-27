@@ -688,8 +688,22 @@ function Panel({ icon, title, children }: { icon: ReactNode; title: string; chil
 function ErrorNote({ children }: { children: ReactNode }) {
   return (
     <p className="mt-4 flex items-start gap-2 rounded-xl border border-critical/40 bg-critical/5 p-3 text-sm text-foreground">
-      <AlertCircle className="mt-0.5 size-4 shrink-0 text-critical" /> {children}
+      <AlertCircle className="mt-0.5 size-4 shrink-0 text-critical" /> <span className="min-w-0 break-words">{linkify(children)}</span>
     </p>
+  )
+}
+
+/** Turns https://github.com/… links in an error message into real links (e.g. "open your fork and sync it"). */
+function linkify(children: ReactNode): ReactNode {
+  if (typeof children !== "string") return children
+  return children.split(/(https:\/\/github\.com\/[\w.\/-]*[\w\/])/).map((part, i) =>
+    i % 2 ? (
+      <a key={i} className="underline underline-offset-4" href={part} target="_blank" rel="noreferrer">
+        {part.replace("https://", "")}
+      </a>
+    ) : (
+      part
+    ),
   )
 }
 

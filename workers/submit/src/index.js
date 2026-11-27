@@ -352,12 +352,24 @@ async function submit(request, env, user) {
         ? gh(token, "PATCH", `/repos/${headRepo}/git/refs/heads/${branch}`, { sha: baseSha, force: true })
         : gh(token, "POST", `/repos/${headRepo}/git/refs`, { ref: `refs/heads/${branch}`, sha: baseSha })
     }
+    const ok = (r) => r.status === 200 || r.status === 201
     let ref = await setBranch()
-    if (ref.status !== 200 && ref.status !== 201 && headRepo !== up.full) {
-      await gh(token, "POST", `/repos/${headRepo}/merge-upstream`, { branch: base })
-      ref = await setBranch()
+    if (!ok(ref) && headRepo !== up.full) {
+      // Usually the fork is behind upstream and the missing commits touch .github/workflows/. GitHub won't let
+      // a token without the `workflow` scope (we only ask for public_repo) bring those into the fork, and says
+      // "Not Found". Try syncing the fork; if GitHub refuses that too, only the user can, with one click.
+      const sync = await gh(token, "POST", `/repos/${headRepo}/merge-upstream`, { branch: base })
+      ref = ok(sync) ? await setBranch() : ref
+      if (!ok(ref)) {
+        throw new HttpError(
+          409,
+          `Your copy of Suyus on GitHub is out of date, and GitHub only lets you update it yourself. ` +
+            `Open https://github.com/${headRepo}, click "Sync fork" and then "Update branch", ` +
+            `then come back and press Submit again. Your draft is saved.`
+        )
+      }
     }
-    if (ref.status !== 200 && ref.status !== 201) throw new HttpError(502, `Couldn't create the branch: ${ghMessage(ref)}`)
+    if (!ok(ref)) throw new HttpError(502, `Couldn't create the branch: ${ghMessage(ref)}`)
   }
 
   // 5. Commit the file.
