@@ -4,7 +4,7 @@
 //   GET  /auth/callback                      GitHub redirects here; saves the token, sends the user back with a session
 //   GET  /health                             { ok: true }
 //   GET  /me                                 the signed-in GitHub account
-//   GET  /draft      PUT /draft              the form's saved progress
+//   GET  /draft      PUT /draft              the form's saved progress (GET also reports prState: open/merged/closed)
 //   POST /submit     { markdown }            fork the repo as the user, commit their file, open (or update) the PR
 //   POST /logout     { forget?: boolean }    forget=true revokes Suyus's GitHub access and deletes the stored token
 //
@@ -256,7 +256,23 @@ const publicUser = (u) => ({ id: u.id, githubLogin: u.githubLogin, githubId: u.g
 
 const findDraft = (env, user) => findOne(env, "portfolio_drafts", `user="${user.id}"`)
 
-const publicDraft = (d) => (d ? { data: d.data, step: d.step, prUrl: d.prUrl || "", prNumber: d.prNumber || 0, submitted: d.submitted || "" } : null)
+const publicDraft = (d, prState = "") =>
+  d ? { data: d.data, step: d.step, prUrl: d.prUrl || "", prNumber: d.prNumber || 0, submitted: d.submitted || "", prState } : null
+
+// The saved draft, plus what happened to its pull request. Once that PR is merged or closed it no longer takes new
+// commits, so the draft forgets it (the next submit opens a fresh PR) and the form is told why.
+async function loadDraft(env, user) {
+  let draft = await findDraft(env, user)
+  if (!draft?.prNumber || !user.token) return publicDraft(draft, draft?.prNumber ? "open" : "")
+  const pr = await gh(user.token, "GET", `/repos/${upstream(env).full}/pulls/${draft.prNumber}`)
+  if (pr.status !== 200) return publicDraft(draft, "open") // can't tell; keep it as is
+  if (pr.json.state === "open") return publicDraft(draft, "open")
+  const prState = pr.json.merged_at ? "merged" : "closed"
+  const number = draft.prNumber
+  const url = draft.prUrl
+  draft = await pb(env, "PATCH", `${records("portfolio_drafts")}/${draft.id}`, { prUrl: "", prNumber: 0 })
+  return { ...publicDraft(draft, prState), prUrl: url, prNumber: number }
+}
 
 async function saveDraft(request, env, user) {
   const body = await request.json().catch(() => null)
@@ -426,7 +442,7 @@ export default {
       const route = `${request.method} ${url.pathname}`
       const user = await currentUser(request, env)
       if (route === "GET /me") return json(publicUser(user), 200, corsHeaders)
-      if (route === "GET /draft") return json({ draft: publicDraft(await findDraft(env, user)) }, 200, corsHeaders)
+      if (route === "GET /draft") return json({ draft: await loadDraft(env, user) }, 200, corsHeaders)
       if (route === "PUT /draft") return json({ draft: await saveDraft(request, env, user) }, 200, corsHeaders)
       if (route === "POST /submit") return json(await submit(request, env, user), 200, corsHeaders)
       if (route === "POST /logout") return json(await logout(request, env, user), 200, corsHeaders)

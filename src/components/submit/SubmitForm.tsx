@@ -79,6 +79,7 @@ export default function SubmitForm({ repo, repoUrl, prGuideUrl, siteUrl }: Props
   const [user, setUser] = useState<Me | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [published, setPublished] = useState<string | null>(null) // the file currently on the site, if any
+  const [fromPublished, setFromPublished] = useState(false) // the form was filled from the live page, not a draft
   const [step, setStep] = useState<number>(STEP_BASICS)
   const [draft, setDraft] = useState<Draft | null>(null)
   const [saving, setSaving] = useState<"idle" | "saving" | "saved" | "error">("idle")
@@ -113,31 +114,51 @@ export default function SubmitForm({ repo, repoUrl, prGuideUrl, siteUrl }: Props
 
   async function start(me: Me) {
     setUser(me)
-    let hasDraft = false
-    try {
-      const { draft: saved } = await api<{ draft: Draft | null }>("/draft")
-      if (saved) {
-        hasDraft = true
-        setDraft(saved)
-        setForm(normalizeForm(saved.data))
-        setStep(Math.min(Math.max(saved.step || STEP_BASICS, STEP_BASICS), STEP_REVIEW))
-        setNotice("Welcome back. Your draft is restored.")
-      }
-    } catch {}
-    if (!hasDraft) setForm({ ...emptyForm(), name: me.name ?? "" })
-    // The published file, to start from it (no draft yet) and to tell whether anything changed.
-    try {
-      const res = await fetch(`https://raw.githubusercontent.com/${repo}/main/src/content/portfolios/${me.githubLogin}.md`, { cache: "no-store" })
-      if (res.ok) {
-        const text = await res.text()
-        setPublished(text)
-        if (!hasDraft) {
-          setForm(fromMarkdown(text))
-          setNotice("You already have a portfolio. We loaded it so you can update it.")
-        }
-      }
-    } catch {}
+    // The published file: the starting point when there's no draft, and how we tell whether anything changed.
+    const livePage = fetch(`https://raw.githubusercontent.com/${repo}/main/src/content/portfolios/${me.githubLogin}.md`, { cache: "no-store" })
+      .then((res) => (res.ok ? res.text() : null))
+      .catch(() => null)
+    const saved = await api<{ draft: Draft | null }>("/draft").then((r) => r.draft).catch(() => null)
+    const text = await livePage
+    setPublished(text)
+    setFromPublished(false)
+
+    const pr = saved?.prNumber ? `Pull request #${saved.prNumber}` : "Your pull request"
+    if (saved?.prState === "merged" && text) {
+      // Merged: the live file is the truth now (a maintainer may have touched it), so edit from there.
+      setDraft({ ...saved, prUrl: "", prNumber: 0 })
+      setForm(fromMarkdown(text))
+      setFromPublished(true)
+      setNotice(`${pr} was merged and your page is live. We loaded it so you can make changes; submitting opens a new pull request.`)
+    } else if (saved) {
+      const closed = saved.prState === "closed" || saved.prState === "merged"
+      setDraft(closed ? { ...saved, prUrl: "", prNumber: 0 } : saved)
+      setForm(normalizeForm(saved.data))
+      setStep(Math.min(Math.max(saved.step || STEP_BASICS, STEP_BASICS), STEP_REVIEW))
+      setNotice(
+        saved.prState === "closed"
+          ? `${pr} was closed without being merged. Your draft is still here; submitting opens a new pull request.`
+          : "Welcome back. Your draft is restored.",
+      )
+    } else if (text) {
+      setForm(fromMarkdown(text))
+      setFromPublished(true)
+      setNotice("You already have a portfolio. We loaded it so you can update it.")
+    } else {
+      setForm({ ...emptyForm(), name: me.name ?? "" })
+    }
     setPhase("ready")
+  }
+
+  /** Throw the draft away and start again from the page that's live now. */
+  function startFromPublished() {
+    if (!published) return
+    setForm(fromMarkdown(published))
+    setFromPublished(true)
+    setShowProblems(false)
+    setStep(STEP_BASICS)
+    setSaving("idle")
+    setNotice("Loaded your live page. Your old draft is replaced when you move to the next step or save.")
   }
 
   function signIn() {
@@ -151,6 +172,7 @@ export default function SubmitForm({ repo, repoUrl, prGuideUrl, siteUrl }: Props
     setDraft(null)
     setForm(emptyForm())
     setPublished(null)
+    setFromPublished(false)
     setResult(null)
     setStep(STEP_BASICS)
     setPhase("signed-out")
@@ -315,6 +337,14 @@ export default function SubmitForm({ repo, repoUrl, prGuideUrl, siteUrl }: Props
       {notice && (
         <p className="mt-6 flex items-start gap-2 rounded-xl bg-muted/50 p-3 text-sm text-muted-foreground">
           <Sparkles className="mt-0.5 size-4 shrink-0" /> {notice}
+        </p>
+      )}
+      {published && !fromPublished && !unchanged && (
+        <p className="mt-3 text-sm text-muted-foreground">
+          Editing a saved draft.{" "}
+          <button type="button" className="underline underline-offset-4 hover:text-foreground" onClick={startFromPublished}>
+            Start from my live page instead
+          </button>
         </p>
       )}
       {draft?.prUrl && step !== STEP_REVIEW && (
