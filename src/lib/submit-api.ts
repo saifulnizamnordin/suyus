@@ -18,6 +18,8 @@ export interface Draft {
   prUrl: string
   prNumber: number
   submitted: string
+  /** What happened to the draft's pull request. After "merged" or "closed" the next submit opens a new one. */
+  prState?: "" | "open" | "merged" | "closed"
 }
 
 export interface SubmitResult {
